@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CommuniVerse - Student Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --accent-blue: #2563eb;
+      --accent-blue-hover: #1d4ed8;
+      --bg-dark: #f8fafc;
+      --panel-bg: #ffffff;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar */
+    aside {
+      width: 260px;
+      background: var(--panel-bg);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 1.5rem 1rem;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 50;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      padding: 0 0.5rem;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: #eff6ff;
+      color: var(--accent-blue);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+    }
+
+    .brand-text h2 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .brand-text p {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      flex: 1;
+    }
+
+    .nav-item button, .nav-item a {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .nav-item button i, .nav-item a i {
+      width: 18px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .nav-item button:hover, .nav-item a:hover {
+      background: #f1f5f9;
+      color: var(--text-main);
+    }
+
+    .nav-item.active button, .nav-item.active a {
+      background: #eff6ff;
+      color: var(--accent-blue);
+    }
+
+    /* Sidebar Footer User Card */
+    .sidebar-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .user-card {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar-icon {
+      width: 38px;
+      height: 38px;
+      background: var(--accent-blue);
+      color: #fff;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .user-details h4 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 140px;
+    }
+
+    .user-details p {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Logout Button Styling */
+    .btn-logout {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ef4444;
+      background: #fef2f2;
+      border: 1px solid #fee2e2;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .btn-logout i {
+      width: 18px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .btn-logout:hover {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    /* Main Area */
+    main {
+      margin-left: 260px;
+      flex: 1;
+      padding: 2.5rem;
+      min-height: 100vh;
+    }
+
+    .view-section {
+      display: none;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    /* Header Bar */
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 2rem;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+
+    .header-title h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .header-title p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    /* --- PROFILE MENU DROPDOWN STYLING --- */
+    .profile-menu-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .profile-trigger-btn {
+      background: #f1f5f9;
+      border: 1px solid var(--border-color);
+      padding: 0.5rem 0.85rem;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .profile-trigger-btn:hover {
+      background: #e2e8f0;
+      border-color: #cbd5e1;
+    }
+
+    .profile-trigger-avatar {
+      width: 32px;
+      height: 32px;
+      background: var(--accent-blue);
+      color: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .profile-dropdown-card {
+      display: none;
+      position: absolute;
+      top: calc(100% + 0.6rem);
+      right: 0;
+      width: 280px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      overflow: hidden;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .profile-dropdown-card.active {
+      display: block;
+    }
+
+    .profile-dropdown-header {
+      padding: 1.25rem;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .profile-dropdown-avatar-large {
+      width: 44px;
+      height: 44px;
+      background: var(--accent-blue);
+      color: #fff;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .profile-dropdown-info h4 {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .profile-dropdown-info p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      word-break: break-all;
+      margin-top: 0.2rem;
+    }
+
+    .profile-dropdown-body {
+      padding: 0.5rem 0;
+    }
+
+    .profile-menu-item {
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+
+    .profile-menu-item:hover {
+      background: #f1f5f9;
+    }
+
+    .profile-menu-item i {
+      color: var(--text-muted);
+      width: 18px;
+    }
+
+    .profile-menu-divider {
+      height: 1px;
+      background: var(--border-color);
+      margin: 0.35rem 0;
+    }
+    /* --- END PROFILE MENU STYLING --- */
+
+    .btn-create {
+      background: var(--accent-blue);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+      transition: background 0.2s ease;
+    }
+
+    .btn-create:hover {
+      background: var(--accent-blue-hover);
+    }
+
+    /* Overview Stats Grid */
+    .overview-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: #eff6ff;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .stat-info h3 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .stat-info p {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Recent Activity Table Card */
+    .activity-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      margin-bottom: 1.5rem;
+    }
+
+    .activity-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .activity-card-header h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .activity-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .activity-table th {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .activity-table td {
+      font-size: 0.85rem;
+      color: var(--text-main);
+      padding: 1rem 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-weight: 500;
+    }
+
+    .activity-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .status-badge.completed {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+
+    .status-badge.pending {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .status-badge.ongoing {
+      background: #e0f2fe;
+      color: #0284c7;
+    }
+
+    /* Classes & Strands View Grid */
+    .strands-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .strand-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .strand-card:hover {
+      border-color: var(--accent-blue);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+    }
+
+    .strand-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .strand-title-group h3 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+    }
+
+    .strand-title-group p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .strand-count-badge {
+      background: #eff6ff;
+      color: var(--accent-blue);
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .strand-sections-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .section-pill {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.4rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .strand-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-color);
+      padding-top: 1.25rem;
+      margin-top: auto;
+      gap: 0.5rem;
+    }
+
+    .active-sections-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Modal / Create Class Modals */
+    .create-class-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.5);
+      z-index: 105;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .create-class-modal.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 750px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 1.5rem 1.75rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .btn-close-modal {
+      background: #f1f5f9;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .btn-close-modal:hover {
+      background: #e2e8f0;
+      color: var(--text-main);
+    }
+
+    .modal-body {
+      padding: 1.75rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 1.25rem;
+      margin-top: 0.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .form-control {
+      width: 100%;
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      color: var(--text-main);
+      font-family: var(--font-family);
+      font-size: 0.875rem;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      background: #fff;
+    }
+
+    /* Missions View Styling */
+    .missions-published-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .published-mission-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .published-mission-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mini-strand-badge {
+      background: #eff6ff;
+      color: var(--accent-blue);
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    /* XP & Badges View Styling */
+    .xp-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .xp-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .xp-card h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .leaderboard-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.65rem 0.85rem;
+      background: #f8fafc;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .leaderboard-student {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-main);
+    }
+
+    .leaderboard-xp {
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: var(--accent-blue);
+      background: #eff6ff;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+    }
+
+    .badge-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: #f0fdf4;
+      color: #16a34a;
+      border: 1px solid #dcfce7;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .btn-action-sm {
+      background: var(--accent-blue);
+      color: #fff;
+      border: none;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-action-sm:hover {
+      background: var(--accent-blue-hover);
+    }
+
+    .btn-action-danger {
+      background: #ef4444;
+      color: #fff;
+      border: none;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-action-danger:hover {
+      background: #dc2626;
+    }
+
+    /* --- GLASSMORPHISM LOGOUT MODAL STYLES --- */
+    .glass-logout-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(249, 249, 250, 0.4);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      animation: fadeInModal 0.2s ease;
+    }
+
+    .glass-logout-overlay.active {
+      display: flex;
+    }
+
+    @keyframes fadeInModal {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .glass-modal {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 24px;
+      padding: 40px 30px;
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(255, 254, 254, 0.2);
+      color: #eff0f3;
+    }
+
+    /* Darker text overrides for readability if inside light dashboards, or keep light if preferred. Let's make text adapt nicely */
+    .glass-modal .icon-container {
+      background: rgb(252, 249, 249);
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 20px auto;
+      border: 1px solid rgba(255, 255, 255, 0.993);
+    }
+
+    .glass-modal .logout-icon {
+      width: 28px;
+      height: 28px;
+      color: var(--accent-blue);
+    }
+
+    .glass-modal h2 {
+      margin: 0 0 10px 0;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+    }
+
+    .glass-modal p {
+      margin: 0 0 30px 0;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .glass-modal .button-group {
+      display: flex;
+      gap: 12px;
+    }
+
+    .glass-modal .btn {
+      flex: 1;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .glass-modal .btn-cancel {
+      background: rgba(255, 255, 255, 0.6);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+
+    .glass-modal .btn-cancel:hover {
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .glass-modal .btn-logout-action {
+      background: #ef4444;
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    }
+
+    .glass-modal .btn-logout-action:hover {
+      background: #dc2626;
+      transform: translateY(-1px);
+    }
+    /* --- END GLASSMORPHISM STYLES --- */
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <aside>
+    <div>
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-puzzle-piece"></i>
+        </div>
+        <div class="brand-text">
+          <h2>CommuniVerse</h2>
+          <p>Student Portal</p>
+        </div>
+      </div>
+
+      <ul class="nav-menu">
+        <li class="nav-item active" data-target="overview-view">
+          <button><i class="fa-solid fa-chart-pie"></i> <span>Overview</span></button>
+        </li>
+        <li class="nav-item" data-target="classes-view">
+          <button><i class="fa-solid fa-users"></i> <span>My Class & Roster</span></button>
+        </li>
+        <li class="nav-item" data-target="student-submissions-view">
+          <button><i class="fa-solid fa-folder-open"></i> <span>My Submissions</span></button>
+        </li>
+        <li class="nav-item" data-target="missions-view">
+          <button><i class="fa-solid fa-list-check"></i> <span>Missions & Quizzes</span></button>
+        </li>
+        <li class="nav-item" data-target="xp-view">
+          <button><i class="fa-solid fa-trophy"></i> <span>XP & Badges</span></button>
+        </li>
+        <li class="nav-item">
+          <a href="world-map.html"><i class="fa-solid fa-earth-americas"></i> <span>World Map</span></a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- User Profile Footer with Student Name Fix -->
+    <div class="sidebar-footer">
+      <div class="user-card">
+        <div id="student-avatar" class="user-avatar-icon">S</div>
+        <div class="user-details">
+          <h4 id="student-name">Student</h4>
+          <p id="student-role-label">Student Account</p>
+        </div>
+      </div>
+      <button id="logoutBtn" class="btn-logout">
+        <i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main>
+    
+    <!-- OVERVIEW VIEW -->
+    <div id="overview-view" class="view-section active">
+      <header class="dashboard-header">
+        <div class="header-title">
+          <h1 id="overview-welcome">Student Dashboard</h1>
+          <p>Welcome back! Here is your learning progress overview.</p>
+        </div>
+
+        <!-- PROFILE MENU DROPDOWN -->
+        <div class="header-actions">
+          <div class="profile-menu-container">
+            <button class="profile-trigger-btn" id="profileDropdownBtn">
+              <div class="profile-trigger-avatar" id="header-avatar-initial">S</div>
+              <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: var(--text-muted);"></i>
+            </button>
+
+            <div class="profile-dropdown-card" id="profileDropdownCard">
+              <div class="profile-dropdown-header">
+                <div class="profile-dropdown-avatar-large" id="menu-avatar-initial">S</div>
+                <div class="profile-dropdown-info">
+                  <h4 id="dropdown-user-name">Loading...</h4>
+                  <p id="dropdown-user-email">loading@gmail.com</p>
+                </div>
+              </div>
+              <div class="profile-dropdown-body">
+                <button class="profile-menu-item">
+                  <i class="fa-regular fa-user"></i> <span>My Profile</span>
+                </button>
+                <button class="profile-menu-item">
+                  <i class="fa-solid fa-sliders"></i> <span>Account Settings</span>
+                </button>
+                <div class="profile-menu-divider"></div>
+                <button class="profile-menu-item profile-logout-action" style="color: #ef4444;">
+                  <i class="fa-solid fa-right-from-bracket" style="color: #ef4444;"></i> <span>Log Out</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="overview-stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-trophy"></i></div>
+          <div class="stat-info"><h3 id="stat-student-xp">100</h3><p>Total XP</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #f0fdf4; color: #16a34a;"><i class="fa-solid fa-award"></i></div>
+          <div class="stat-info"><h3 id="stat-student-badges">0</h3><p>Badges Earned</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #f3e8ff; color: #9333ea;"><i class="fa-solid fa-list-check"></i></div>
+          <div class="stat-info"><h3 id="stat-active-missions">0</h3><p>Active Missions</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #fef3c7; color: #d97706;"><i class="fa-solid fa-clock"></i></div>
+          <div class="stat-info"><h3 id="stat-pending-tasks">0</h3><p>Pending Tasks</p></div>
+        </div>
+      </div>
+
+      <div class="activity-card">
+        <div class="activity-card-header">
+          <h3>Recent Mission Activity</h3>
+        </div>
+        <table class="activity-table">
+          <thead>
+            <tr>
+              <th>Mission Title</th>
+              <th>Strand / Track</th>
+              <th>Assigned Teacher</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="recent-activity-tbody">
+            <!-- Dynamically populated from Firebase Realtime Database -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CLASSES & STRANDS VIEW (My Class & Roster Updated Functionality) -->
+    <div id="classes-view" class="view-section">
+      <header class="dashboard-header">
+        <div class="header-title">
+          <h1>My Class & Roster</h1>
+          <p>View your enrolled strand details, section mates, and class roster information.</p>
+        </div>
+      </header>
+
+      <div class="strands-grid" id="strands-grid-container" style="margin-bottom: 2rem;">
+        <!-- Dynamically populated class strand info -->
+      </div>
+
+      <div class="activity-card">
+        <div class="activity-card-header">
+          <h3>Class Roster & Section Mates</h3>
+        </div>
+        <table class="activity-table">
+          <thead>
+            <tr>
+              <th>Student Name</th>
+              <th>Email Address</th>
+              <th>Strand / Track</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="class-roster-tbody">
+            <!-- Dynamically populated classmates list -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- STUDENT SUBMISSIONS VIEW -->
+    <div id="student-submissions-view" class="view-section">
+      <header class="dashboard-header">
+        <div class="header-title">
+          <h1>My Submissions & Files</h1>
+          <p>Upload new assignments or review your previously submitted work.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-create" id="openUploadSubmissionModalBtn">
+            <i class="fa-solid fa-upload"></i> Submit New File
+          </button>
+        </div>
+      </header>
+
+      <div class="activity-card">
+        <div class="activity-card-header">
+          <h3>Submitted Files History</h3>
+        </div>
+        <table class="activity-table">
+          <thead>
+            <tr>
+              <th>File / Mission Name</th>
+              <th>File Type</th>
+              <th>Submitted Date</th>
+              <th>Status</th>
+              <th style="text-align: right;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="student-files-tbody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MISSIONS & QUIZZES VIEW -->
+    <div id="missions-view" class="view-section">
+      <header class="dashboard-header">
+        <div class="header-title">
+          <h1>Missions & Quizzes</h1>
+          <p>Complete active missions and quizzes uploaded by your instructors to earn XP and rewards.</p>
+        </div>
+      </header>
+
+      <div class="missions-published-grid" id="missionsContainer">
+        <!-- Dynamically populated real deployed missions uploaded by teachers -->
+      </div>
+    </div>
+
+    <!-- XP & BADGES VIEW -->
+    <div id="xp-view" class="view-section">
+      <header class="dashboard-header">
+        <div class="header-title">
+          <h1>XP & Badges</h1>
+          <p>Check your gamification rank, review your achievements, and see the student leaderboard.</p>
+        </div>
+      </header>
+
+      <div class="xp-stats-grid">
+        <div class="xp-card">
+          <h3><i class="fa-solid fa-medal" style="color: #eab308;"></i> Class Leaderboard</h3>
+          <ul class="leaderboard-list" id="xp-leaderboard-list">
+            <!-- Dynamically populated real student XP leaderboard -->
+          </ul>
+        </div>
+
+        <div class="xp-card">
+          <h3><i class="fa-solid fa-award" style="color: #3b82f6;"></i> My Earned Badges</h3>
+          <div id="my-badges-container" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem;">
+            <!-- Dynamically populated badges -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Upload / Edit Submission Modal -->
+  <div class="create-class-modal" id="uploadSubmissionModal">
+    <div class="modal-card" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 id="uploadModalTitle">Submit Assignment / File</h3>
+        <button class="btn-close-modal" id="closeUploadModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="uploadSubmissionForm">
+          <input type="hidden" id="editingSubmissionIndex" value="-1">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="submissionMissionTitle">Mission / Task Title</label>
+              <input type="text" id="submissionMissionTitle" class="form-control" placeholder="e.g. Milestone Project Submission" required>
+            </div>
+            <div class="form-group">
+              <label for="submissionFileType">Select Compatible File Type</label>
+              <select id="submissionFileType" class="form-control" required>
+                <option value="Document / File (PDF, DOCX, ZIP)">Document / File (PDF, DOCX, ZIP)</option>
+                <option value="Image (PNG, JPG, JPEG)">Image (PNG, JPG, JPEG)</option>
+                <option value="Video (MP4, AVI, MOV)">Video (MP4, AVI, MOV)</option>
+                <option value="Virtual Machine / VM File (OVA, VHD, OVF)">Virtual Machine / VM File (OVA, VHD, OVF)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="submissionFileSource">Upload File from Computer or Enter Link</label>
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <input type="file" id="submissionComputerFile" class="form-control" style="display: none;">
+                <button type="button" id="browseComputerFileBtn" class="form-control" style="background: #f1f5f9; cursor: pointer; text-align: center; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                  <i class="fa-solid fa-folder-open"></i> <span id="browseFileButtonText">Browse File from Computer</span>
+                </button>
+              </div>
+              <input type="text" id="submissionFileSource" class="form-control" placeholder="e.g. project_v1.mp4 or Drive/VM storage link" style="margin-top: 0.5rem;" required>
+            </div>
+            <div style="margin-top: 0.5rem;">
+              <button type="submit" class="btn-create" id="submitFormBtn" style="width: 100%; justify-content: center;">Submit Assignment</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- GLASSMORPHISM LOGOUT MODAL -->
+  <div class="glass-logout-overlay" id="glassLogoutModal">
+    <div class="glass-modal">
+      <div class="icon-container">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="logout-icon">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+        </svg>
+      </div>
+      <h2>Leaving so soon?</h2>
+      <p>Are you sure you want to log out of your account?</p>
+      
+      <div class="button-group">
+        <button class="btn btn-cancel" id="cancelGlassLogout">Cancel</button>
+        <button class="btn btn-logout-action" id="confirmGlassLogout">Log Out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDKs and Realtime Data Logic Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+    import { getDatabase, ref, onValue, set, update, remove, get, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCG8iQlK2LeiwUkmfzF4I-_20DnRW-33jk",
+      authDomain: "pnhs-election-portal.firebaseapp.com",
+      databaseURL: "https://pnhs-election-portal-default-rtdb.firebaseio.com",
+      projectId: "pnhs-election-portal",
+      storageBucket: "pnhs-election-portal.firebasestorage.app",
+      messagingSenderId: "290654124306",
+      appId: "1:290654124306:web:427f64ef9de55695a75bcb",
+      measurementId: "G-TXTVT32258"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
+
+    document.addEventListener('DOMContentLoaded', () => {
+      
+      let currentLoggedInStudentName = "Student";
+      let currentLoggedInEmail = "student@gmail.com";
+      let currentStudentFirebaseId = null;
+
+      // Elements for Student Info
+      const studentNameEl = document.getElementById('student-name');
+      const studentAvatarEl = document.getElementById('student-avatar');
+      const studentRoleLabel = document.getElementById('student-role-label');
+      const overviewWelcome = document.getElementById('overview-welcome');
+
+      // Profile Dropdown Elements
+      const profileDropdownBtn = document.getElementById('profileDropdownBtn');
+      const profileDropdownCard = document.getElementById('profileDropdownCard');
+      const headerAvatarInitial = document.getElementById('header-avatar-initial');
+      const menuAvatarInitial = document.getElementById('menu-avatar-initial');
+      const dropdownUserName = document.getElementById('dropdown-user-name');
+      const dropdownUserEmail = document.getElementById('dropdown-user-email');
+
+      // Toggle Profile Dropdown
+      if (profileDropdownBtn && profileDropdownCard) {
+        profileDropdownBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          profileDropdownCard.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!profileDropdownCard.contains(e.target) && !profileDropdownBtn.contains(e.target)) {
+            profileDropdownCard.classList.remove('active');
+          }
+        });
+      }
+
+      function applyStudentInfo(name, email, roleStr = 'Student Account') {
+        if (name) {
+          currentLoggedInStudentName = name;
+          studentNameEl.textContent = name;
+          
+          const initial = name.charAt(0).toUpperCase();
+          studentAvatarEl.textContent = initial;
+          headerAvatarInitial.textContent = initial;
+          menuAvatarInitial.textContent = initial;
+          
+          overviewWelcome.textContent = `Welcome back, ${name}!`;
+          studentRoleLabel.textContent = roleStr;
+          dropdownUserName.textContent = name;
+        }
+        if (email) {
+          currentLoggedInEmail = email;
+          dropdownUserEmail.textContent = email;
+        }
+      }
+
+      const localUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (localUser && (localUser.fullname || localUser.name)) {
+        const uName = localUser.fullname || localUser.name;
+        const uEmail = localUser.email || localUser.gmail || 'student@gmail.com';
+        currentStudentFirebaseId = localUser.firebaseId || localUser.uid || null;
+        applyStudentInfo(uName, uEmail, localUser.role ? `${localUser.role} Account` : 'Student Account');
+      } else {
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            const fallbackName = user.displayName || user.email.split('@')[0];
+            currentStudentFirebaseId = user.uid;
+            applyStudentInfo(fallbackName, user.email, 'Student Account');
+          }
+        });
+      }
+
+      // Glassmorphism Logout Modal Trigger & Handling Logic
+      const glassLogoutModal = document.getElementById('glassLogoutModal');
+      const cancelGlassLogout = document.getElementById('cancelGlassLogout');
+      const confirmGlassLogout = document.getElementById('confirmGlassLogout');
+
+      function openGlassLogoutModal() {
+        if (profileDropdownCard) profileDropdownCard.classList.remove('active');
+        if (glassLogoutModal) glassLogoutModal.classList.add('active');
+      }
+
+      function closeGlassLogoutModal() {
+        if (glassLogoutModal) glassLogoutModal.classList.remove('active');
+      }
+
+      function executeLogout() {
+        localStorage.removeItem('currentUser');
+        signOut(auth).then(() => {
+          window.location.href = "index.html";
+        }).catch(() => {
+          window.location.reload();
+        });
+      }
+
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          openGlassLogoutModal();
+        });
+      }
+
+      document.querySelectorAll('.profile-logout-action').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          openGlassLogoutModal();
+        });
+      });
+
+      if (cancelGlassLogout) {
+        cancelGlassLogout.addEventListener('click', closeGlassLogoutModal);
+      }
+
+      if (confirmGlassLogout) {
+        confirmGlassLogout.addEventListener('click', executeLogout);
+      }
+
+      if (glassLogoutModal) {
+        glassLogoutModal.addEventListener('click', (e) => {
+          if (e.target === glassLogoutModal) {
+            closeGlassLogoutModal();
+          }
+        });
+      }
+
+      let registeredUsersObj = {};
+      let students = [];
+      let customClasses = [];
+      let missions = [];
+
+      // Real-time Listeners from Firebase Database
+      const usersRef = ref(db, 'registeredUsers');
+      onValue(usersRef, (snapshot) => {
+        registeredUsersObj = snapshot.val() || {};
+        students = Object.entries(registeredUsersObj).map(([key, val]) => ({
+          firebaseId: key,
+          ...val,
+          fullname: val.fullname || val.name || val.username || 'Student User'
+        }));
+
+        checkWorldMapPendingXP();
+        refreshDashboardData();
+      });
+
+      const classesRef = ref(db, 'communiverse_classes');
+      onValue(classesRef, (snapshot) => {
+        const classesObj = snapshot.val() || {};
+        customClasses = Object.entries(classesObj).map(([key, val]) => ({
+          firebaseId: key,
+          ...val
+        }));
+
+        refreshDashboardData();
+      });
+
+      const missionsRef = ref(db, 'communiverse_missions');
+      onValue(missionsRef, (snapshot) => {
+        const missionsObj = snapshot.val() || {};
+        missions = Object.entries(missionsObj).map(([key, val]) => ({
+          firebaseId: key,
+          ...val
+        }));
+
+        refreshDashboardData();
+        renderMissions();
+      });
+
+      // Automatically sync and compute XP earned from world-map via localStorage / session tracking or DB updates
+      function checkWorldMapPendingXP() {
+        let currentStudent = students.find(s => s.firebaseId === currentStudentFirebaseId || s.email === currentLoggedInEmail || s.fullname === currentLoggedInStudentName);
+        if (!currentStudent && students.length > 0) {
+          currentStudent = students[0];
+        }
+        if (!currentStudent) return;
+
+        const pendingWorldMapXP = parseInt(localStorage.getItem('worldMapPendingXP') || '0', 10);
+        const lastProcessedKey = localStorage.getItem('worldMapLastProcessedKey') || '';
+        const currentWorldMapKey = localStorage.getItem('worldMapGameSessionKey') || '';
+
+        let addedXP = 0;
+        if (pendingWorldMapXP > 0 && currentWorldMapKey !== lastProcessedKey) {
+          addedXP = pendingWorldMapXP;
+          localStorage.setItem('worldMapLastProcessedKey', currentWorldMapKey);
+          localStorage.removeItem('worldMapPendingXP');
+        }
+
+        const worldMapTotalXP = localStorage.getItem('worldMapTotalXP');
+        if (worldMapTotalXP !== null) {
+          const targetTotal = parseInt(worldMapTotalXP, 10);
+          const currentDbXP = parseInt(currentStudent.xp || 100, 10);
+          if (targetTotal > currentDbXP) {
+            addedXP = targetTotal - currentDbXP;
+          }
+          localStorage.removeItem('worldMapTotalXP');
+        }
+
+        if (addedXP > 0) {
+          const currentDbXP = parseInt(currentStudent.xp || 100, 10);
+          const newTotalXP = currentDbXP + addedXP;
+          const targetFirebaseId = currentStudent.firebaseId || currentStudentFirebaseId;
+
+          if (targetFirebaseId) {
+            const studentRef = ref(db, `registeredUsers/${targetFirebaseId}`);
+            update(studentRef, {
+              xp: newTotalXP,
+              lastUpdatedXP: new Date().toISOString()
+            }).then(() => {
+              console.log(`Successfully added ${addedXP} XP from World Map. New Total XP: ${newTotalXP}`);
+            }).catch(err => {
+              console.error("Failed to update XP to Firebase:", err);
+            });
+          }
+        }
+      }
+
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'worldMapPendingXP' || e.key === 'worldMapTotalXP') {
+          checkWorldMapPendingXP();
+        }
+      });
+
+      function refreshDashboardData() {
+        let currentStudent = students.find(s => s.firebaseId === currentStudentFirebaseId || s.email === currentLoggedInEmail || s.fullname === currentLoggedInStudentName);
+        if (!currentStudent && students.length > 0) {
+          currentStudent = students[0]; // fallback
+        }
+
+        const studentXp = parseInt(currentStudent?.xp || 100, 10);
+        const studentBadge = currentStudent?.badge || currentStudent?.badges || 'None';
+        const badgesCount = studentBadge !== 'None' ? 1 : 0;
+
+        document.getElementById('stat-student-xp').textContent = studentXp;
+        document.getElementById('stat-student-badges').textContent = badgesCount;
+        document.getElementById('stat-active-missions').textContent = missions.length;
+        document.getElementById('stat-pending-tasks').textContent = currentStudent?.status === 'Pending' ? 1 : 0;
+
+        // Recent Activity Table
+        const recentActivityTbody = document.getElementById('recent-activity-tbody');
+        if (currentStudent && currentStudent.recentMission) {
+          recentActivityTbody.innerHTML = `
+            <tr>
+              <td style="font-weight: 700;">${currentStudent.recentMission}</td>
+              <td style="font-weight: 700;">${currentStudent.strand || 'General Strand'}</td>
+              <td>${currentStudent.teacherName || 'Assigned Instructor'}</td>
+              <td><span class="status-badge ongoing">${currentStudent.status || 'Ongoing'}</span></td>
+            </tr>
+          `;
+        } else {
+          recentActivityTbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No recent mission activity found.</td></tr>`;
+        }
+
+        // Classes & Strands View Grid Render (My Class & Roster Updated Functionality)
+        const strandsGridContainer = document.getElementById('strands-grid-container');
+        const studentStrand = currentStudent?.strand || 'General ICT Strand';
+        const classInstructor = currentStudent?.teacherName || currentStudent?.instructor || 'Assigned Instructor';
+        
+        strandsGridContainer.innerHTML = `
+          <div class="strand-card">
+            <div class="strand-card-header">
+              <div class="strand-title-group">
+                <h3>${studentStrand}</h3>
+                <p>Enrolled Track & Class Roster Info</p>
+              </div>
+              <div class="strand-count-badge">Enrolled</div>
+            </div>
+            <div class="strand-sections-box">
+              <span class="section-pill"><i class="fa-solid fa-chalkboard-user" style="margin-right: 0.35rem; color: var(--accent-blue);"></i> Instructor: ${classInstructor}</span>
+            </div>
+            <div class="strand-card-footer">
+              <span class="active-sections-label">Status: Active Roster</span>
+            </div>
+          </div>
+        `;
+
+        // Class Roster & Section Mates Table Render
+        const classRosterTbody = document.getElementById('class-roster-tbody');
+        const classmates = students.filter(s => (s.strand || 'General ICT Strand').toLowerCase() === studentStrand.toLowerCase());
+        
+        if (classmates.length > 0) {
+          classRosterTbody.innerHTML = classmates.map(mate => `
+            <tr>
+              <td style="font-weight: 700;"><i class="fa-solid fa-user-graduate" style="color: var(--accent-blue); margin-right: 0.5rem;"></i> ${mate.fullname} ${mate.firebaseId === currentStudent?.firebaseId ? '(You)' : ''}</td>
+              <td style="color: var(--text-muted);">${mate.email || mate.gmail || 'student@gmail.com'}</td>
+              <td><span class="mini-strand-badge">${mate.strand || studentStrand}</span></td>
+              <td><span class="status-badge completed">Enrolled</span></td>
+            </tr>
+          `).join('');
+        } else {
+          classRosterTbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No classmates found in this strand roster.</td></tr>`;
+        }
+
+        // Submitted Files Roster with Edit and Delete options
+        const studentFilesTbody = document.getElementById('student-files-tbody');
+        let files = [];
+        if (currentStudent && currentStudent.submittedFiles) {
+          if (Array.isArray(currentStudent.submittedFiles)) {
+            files = currentStudent.submittedFiles;
+          } else if (typeof currentStudent.submittedFiles === 'object') {
+            files = Object.values(currentStudent.submittedFiles);
+          }
+        } else if (currentStudent && currentStudent.submissionFile) {
+          files = [{ name: currentStudent.submissionFile, fileType: 'Document / File', date: currentStudent.submissionDate || 'Recent', status: 'Submitted' }];
+        }
+
+        if (files.length > 0) {
+          studentFilesTbody.innerHTML = files.map((file, idx) => `
+            <tr>
+              <td style="font-weight: 700;"><i class="fa-solid fa-file-lines" style="color: var(--accent-blue); margin-right: 0.5rem;"></i> ${file.name || 'Submitted Document'}</td>
+              <td><span style="font-size: 0.8rem; color: var(--text-muted);">${file.fileType || 'File / VM'}</span></td>
+              <td>${file.date || 'N/A'}</td>
+              <td><span class="status-badge completed">Submitted</span></td>
+              <td style="text-align: right;">
+                <button class="btn-action-sm" onclick="window.editStudentSubmission(${idx}, '${escapeHtml(file.name || '')}', '${escapeHtml(file.fileType || '')}', '${escapeHtml(file.url || file.name || '')}')" style="margin-right: 0.35rem;"><i class="fa-solid fa-pen"></i> Edit</button>
+                <button class="btn-action-danger" onclick="window.deleteStudentSubmission(${idx})"><i class="fa-solid fa-trash"></i> Delete</button>
+              </td>
+            </tr>
+          `).join('');
+        } else {
+          studentFilesTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No files submitted yet. Use the 'Submit New File' button above.</td></tr>`;
+        }
+
+        // Leaderboard & Badges View
+        const xpLeaderboardList = document.getElementById('xp-leaderboard-list');
+        const sortedStudentsByXP = [...students].sort((a, b) => parseInt(b.xp || 100, 10) - parseInt(a.xp || 100, 10));
+
+        if (sortedStudentsByXP.length > 0) {
+          xpLeaderboardList.innerHTML = sortedStudentsByXP.slice(0, 5).map((st, idx) => `
+            <li class="leaderboard-item">
+              <span class="leaderboard-student">${idx + 1}. ${st.fullname} (${st.strand || 'General'})</span>
+              <span class="leaderboard-xp">${parseInt(st.xp || 100, 10)} XP</span>
+            </li>
+          `).join('');
+        } else {
+          xpLeaderboardList.innerHTML = `<li style="text-align: center; color: var(--text-muted); padding: 1rem; font-size: 0.85rem;">Leaderboard empty.</li>`;
+        }
+
+        const myBadgesContainer = document.getElementById('my-badges-container');
+        if (studentBadge !== 'None') {
+          myBadgesContainer.innerHTML = `<span class="badge-tag" style="padding: 0.5rem 1rem; font-size: 0.9rem;"><i class="fa-solid fa-award"></i> ${studentBadge}</span>`;
+        } else {
+          myBadgesContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem;">No badges earned yet. Complete missions or world map stages to earn badges!</p>`;
+        }
+      }
+
+      // Sidebar Navigation Switching Logic
+      const navItems = document.querySelectorAll('.nav-item[data-target]');
+      const viewSections = document.querySelectorAll('.view-section');
+
+      navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.preventDefault();
+          navItems.forEach(nav => nav.classList.remove('active'));
+          item.classList.add('active');
+
+          const targetId = item.getAttribute('data-target');
+          viewSections.forEach(section => {
+            if (section.id === targetId) {
+              section.classList.add('active');
+            } else {
+              section.classList.remove('active');
+            }
+          });
+        });
+      });
+
+      // Upload Submission Modal Logic
+      const uploadSubmissionModal = document.getElementById('uploadSubmissionModal');
+      const openUploadSubmissionModalBtn = document.getElementById('openUploadSubmissionModalBtn');
+      const closeUploadModalBtn = document.getElementById('closeUploadModalBtn');
+      const uploadSubmissionForm = document.getElementById('uploadSubmissionForm');
+
+      const browseComputerFileBtn = document.getElementById('browseComputerFileBtn');
+      const submissionComputerFile = document.getElementById('submissionComputerFile');
+      const submissionFileSource = document.getElementById('submissionFileSource');
+      const browseFileButtonText = document.getElementById('browseFileButtonText');
+
+      if (browseComputerFileBtn && submissionComputerFile) {
+        browseComputerFileBtn.addEventListener('click', () => {
+          submissionComputerFile.click();
+        });
+
+        submissionComputerFile.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            browseFileButtonText.textContent = file.name;
+            submissionFileSource.value = file.name;
+
+            const fileTypeSelect = document.getElementById('submissionFileType');
+            const fileNameLower = file.name.toLowerCase();
+            if (fileNameLower.endsWith('.pdf') || fileNameLower.endsWith('.docx') || fileNameLower.endsWith('.doc') || fileNameLower.endsWith('.zip')) {
+              fileTypeSelect.value = 'Document / File (PDF, DOCX, ZIP)';
+            } else if (fileNameLower.endsWith('.png') || fileNameLower.endsWith('.jpg') || fileNameLower.endsWith('.jpeg')) {
+              fileTypeSelect.value = 'Image (PNG, JPG, JPEG)';
+            } else if (fileNameLower.endsWith('.mp4') || fileNameLower.endsWith('.avi') || fileNameLower.endsWith('.mov')) {
+              fileTypeSelect.value = 'Video (MP4, AVI, MOV)';
+            } else if (fileNameLower.endsWith('.ova') || fileNameLower.endsWith('.vhd') || fileNameLower.endsWith('.ovf')) {
+              fileTypeSelect.value = 'Virtual Machine / VM File (OVA, VHD, OVF)';
+            }
+          }
+        });
+      }
+
+      if (openUploadSubmissionModalBtn) {
+        openUploadSubmissionModalBtn.addEventListener('click', () => {
+          document.getElementById('uploadModalTitle').textContent = 'Submit Assignment / File';
+          document.getElementById('submitFormBtn').textContent = 'Submit Assignment';
+          document.getElementById('editingSubmissionIndex').value = '-1';
+          uploadSubmissionForm.reset();
+          if (browseFileButtonText) browseFileButtonText.textContent = 'Browse File from Computer';
+          uploadSubmissionModal.classList.add('active');
+        });
+      }
+
+      if (closeUploadModalBtn) {
+        closeUploadModalBtn.addEventListener('click', () => {
+          uploadSubmissionModal.classList.remove('active');
+        });
+      }
+
+      uploadSubmissionModal.addEventListener('click', (e) => {
+        if (e.target === uploadSubmissionModal) {
+          uploadSubmissionModal.classList.remove('active');
+        }
+      });
+
+      window.editStudentSubmission = function(index, currentTitle, currentType, currentUrl) {
+        document.getElementById('uploadModalTitle').textContent = 'Edit Submission';
+        document.getElementById('submitFormBtn').textContent = 'Update Submission';
+        document.getElementById('editingSubmissionIndex').value = index;
+        document.getElementById('submissionMissionTitle').value = currentTitle;
+        document.getElementById('submissionFileType').value = currentType || 'Document / File (PDF, DOCX, ZIP)';
+        document.getElementById('submissionFileSource').value = currentUrl;
+        if (browseFileButtonText) browseFileButtonText.textContent = currentUrl || 'Browse File from Computer';
+        uploadSubmissionModal.classList.add('active');
+      };
+
+      window.deleteStudentSubmission = function(index) {
+        if (confirm("Are you sure you want to delete this submission?")) {
+          let currentStudent = students.find(s => s.firebaseId === currentStudentFirebaseId || s.email === currentLoggedInEmail || s.fullname === currentLoggedInStudentName);
+          if (currentStudent && currentStudent.firebaseId) {
+            let files = [];
+            if (Array.isArray(currentStudent.submittedFiles)) {
+              files = [...currentStudent.submittedFiles];
+            } else if (typeof currentStudent.submittedFiles === 'object') {
+              files = Object.values(currentStudent.submittedFiles);
+            }
+            files.splice(index, 1);
+
+            const studentRef = ref(db, `registeredUsers/${currentStudent.firebaseId}`);
+            update(studentRef, {
+              submittedFiles: files,
+              submissionFile: files.length > 0 ? files[files.length - 1].name : null,
+              recentMission: files.length > 0 ? files[files.length - 1].name : 'No submissions'
+            }).then(() => {
+              alert("Submission deleted successfully.");
+            });
+          }
+        }
+      };
+
+      if (uploadSubmissionForm) {
+        uploadSubmissionForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const title = document.getElementById('submissionMissionTitle').value.trim();
+          const fileType = document.getElementById('submissionFileType').value;
+          const fileSource = document.getElementById('submissionFileSource').value.trim();
+          const editIndex = parseInt(document.getElementById('editingSubmissionIndex').value, 10);
+
+          if (currentStudentFirebaseId && title && fileSource) {
+            let currentStudent = students.find(s => s.firebaseId === currentStudentFirebaseId || s.email === currentLoggedInEmail || s.fullname === currentLoggedInStudentName);
+            
+            let files = [];
+            if (currentStudent && currentStudent.submittedFiles) {
+              if (Array.isArray(currentStudent.submittedFiles)) {
+                files = [...currentStudent.submittedFiles];
+              } else if (typeof currentStudent.submittedFiles === 'object') {
+                files = Object.values(currentStudent.submittedFiles);
+              }
+            }
+
+            const newFileObj = {
+              name: title,
+              fileType: fileType,
+              url: fileSource,
+              date: new Date().toLocaleDateString(),
+              status: 'Submitted'
+            };
+
+            if (editIndex >= 0 && editIndex < files.length) {
+              files[editIndex] = newFileObj;
+            } else {
+              files.push(newFileObj);
+            }
+
+            const studentRef = ref(db, `registeredUsers/${currentStudentFirebaseId}`);
+            
+            const instructorName = currentStudent?.teacherName || currentStudent?.instructor || 'Assigned Instructor';
+            const submissionPayload = {
+              studentFirebaseId: currentStudentFirebaseId,
+              studentName: currentLoggedInStudentName,
+              studentEmail: currentLoggedInEmail,
+              strand: currentStudent?.strand || 'General ICT Strand',
+              missionTitle: title,
+              fileType: fileType,
+              fileUrl: fileSource,
+              dateSubmitted: new Date().toISOString(),
+              instructor: instructorName
+            };
+
+            const teacherSubmissionsRef = ref(db, 'communiverse_instructor_submissions');
+            push(teacherSubmissionsRef, submissionPayload);
+
+            update(studentRef, {
+              submittedFiles: files,
+              submissionFile: fileSource,
+              submissionDate: new Date().toLocaleDateString(),
+              recentMission: title,
+              status: 'Completed',
+              missionStatus: 'completed'
+            }).then(() => {
+              alert(`Assignment successfully submitted and synced to your teacher's folder (${instructorName})!`);
+              uploadSubmissionForm.reset();
+              if (browseFileButtonText) browseFileButtonText.textContent = 'Browse File from Computer';
+              uploadSubmissionModal.classList.remove('active');
+            });
+          }
+        });
+      }
+
+      // Missions Rendering
+      const missionsContainer = document.getElementById('missionsContainer');
+      function renderMissions() {
+        if (missions.length > 0) {
+          missionsContainer.innerHTML = missions.map((m) => `
+            <div class="published-mission-card">
+              <div class="published-mission-header">
+                <span class="mini-strand-badge">${m.strand || m.category || 'General Mission'}</span>
+                <span class="status-badge ongoing">Active Task</span>
+              </div>
+              <div class="published-mission-body">
+                <h4 style="font-size: 1.1rem; font-weight: 800; color: var(--text-main);">${m.title || m.name}</h4>
+                <p style="margin-top: 0.5rem; color: var(--text-muted); font-size: 0.85rem; line-height: 1.4;">${m.desc || m.description || 'No instructions provided.'}</p>
+                ${m.points ? `<p style="margin-top: 0.5rem; font-size: 0.78rem; font-weight: 700; color: var(--accent-blue);">Reward: ${m.points} XP</p>` : ''}
+              </div>
+              <div style="margin-top: auto; padding-top: 1rem; display: flex; gap: 0.5rem; align-items: center;">
+                <button class="btn-action-sm" onclick="document.getElementById('uploadModalTitle').textContent = 'Submit Assignment / File'; document.getElementById('submitFormBtn').textContent = 'Submit Assignment'; document.getElementById('editingSubmissionIndex').value = '-1'; document.getElementById('submissionMissionTitle').value = '${escapeHtml(m.title || m.name || '')}'; document.getElementById('uploadSubmissionModal').classList.add('active');">Submit Solution</button>
+                ${m.fileUrl ? `<a href="${m.fileUrl}" target="_blank" class="btn-action-sm" style="background: #e2e8f0; color: var(--text-main); text-decoration: none;"><i class="fa-solid fa-download"></i> Material</a>` : ''}
+              </div>
+            </div>
+          `).join('');
+        } else {
+          missionsContainer.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 3rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px;"><i class="fa-solid fa-folder-open" style="font-size: 2rem; margin-bottom: 0.75rem; color: #cbd5e1;"></i><p>No active missions or quizzes have been uploaded by your teachers yet.</p></div>`;
+        }
+      }
+
+      function escapeHtml(text) {
+        if (!text) return '';
+        return text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      }
+
+    });
+  </script>
+
+</body>
+</html>

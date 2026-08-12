@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CommuniVerse - Student Registration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-blue: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg-dark: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      --panel-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-family);
+      background: var(--bg-dark);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+    .split-card {
+      background: var(--panel-bg);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 900px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+    .brand-section {
+      background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
+      color: #ffffff;
+      padding: 3rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+    .brand-top-icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      backdrop-filter: blur(5px);
+    }
+    .brand-content h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+    .brand-content p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.85);
+    }
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      width: fit-content;
+      margin-top: 1.5rem;
+      backdrop-filter: blur(4px);
+    }
+    .brand-logo-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 1.5rem 0;
+    }
+    .brand-logo-container img {
+      max-width: 160px;
+      height: auto;
+      object-fit: contain;
+    }
+    .form-section {
+      padding: 3rem 2.5rem;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .auth-header h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+    }
+    .auth-header p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.75rem;
+    }
+    .form-group {
+      margin-bottom: 1.15rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-wrapper i {
+      position: absolute;
+      left: 1rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      z-index: 2;
+    }
+    .form-control {
+      width: 100%;
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1rem 0.75rem 2.6rem;
+      border-radius: 12px;
+      color: var(--text-main);
+      font-family: var(--font-family);
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+    }
+    select.form-control {
+      appearance: none;
+      cursor: pointer;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-blue);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .btn-submit {
+      width: 100%;
+      background: var(--primary-blue);
+      color: #fff;
+      border: none;
+      padding: 0.85rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-top: 0.75rem;
+      transition: background 0.2s ease;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+    .btn-submit:hover {
+      background: var(--primary-hover);
+    }
+    .btn-submit:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    .auth-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .auth-footer a {
+      color: var(--primary-blue);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .split-card {
+        grid-template-columns: 1fr;
+        max-width: 480px;
+      }
+      .brand-section { padding: 2rem; }
+      .brand-content h2 { font-size: 1.5rem; }
+      .form-section { padding: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="split-card">
+    <div class="brand-section">
+      <div class="brand-top-icon">
+        <i class="fa-solid fa-user-graduate"></i>
+      </div>
+      <div class="brand-content">
+        <div class="brand-badge"><i class="fa-solid fa-graduation-cap"></i> Student Portal</div>
+        <h2>Join CommuniVerse</h2>
+        <p>Register as a student to explore missions, connect with peers, and track your academic progress and achievements.</p>
+      </div>
+      <div class="brand-logo-container">
+        <img src="logo.png" alt="CommuniVerse Logo">
+      </div>
+      <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.7);">
+        © CommuniVerse Platform. All rights reserved.
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="auth-header">
+        <h1>Create Student Account</h1>
+        <p>Please complete the form below.</p>
+      </div>
+
+      <form id="studentRegisterForm">
+        <div class="form-group">
+          <label for="studentName">Full Name</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-user"></i>
+            <input type="text" id="studentName" class="form-control" placeholder="e.g. Juan Dela Cruz" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="studentEmail">Email Address</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-envelope"></i>
+            <input type="email" id="studentEmail" class="form-control" placeholder="student@gmail.com" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="studentPassword">Password</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="studentPassword" class="form-control" placeholder="••••••••" minlength="6" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="studentGradeSection">Select Class</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-layer-group"></i>
+            <select id="studentGradeSection" class="form-control" required>
+              <option value="" disabled selected>Loading available classes...</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" id="submitBtn" class="btn-submit">Register as Student</button>
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <a href="login.html">Login</a>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCG8iQlK2LeiwUkmfzF4I-_20DnRW-33jk",
+      authDomain: "pnhs-election-portal.firebaseapp.com",
+      databaseURL: "https://pnhs-election-portal-default-rtdb.firebaseio.com",
+      projectId: "pnhs-election-portal",
+      storageBucket: "pnhs-election-portal.firebasestorage.app",
+      messagingSenderId: "290654124306",
+      appId: "1:290654124306:web:427f64ef9de55695a75bcb"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
+
+    // Fetch teacher-created classes to populate the selection dropdown
+    async function loadClasses() {
+      const selectElement = document.getElementById('studentGradeSection');
+      try {
+        // Updated to target 'communiverse_classes' where classes with strands/sections/instructors are saved
+        const classesRef = ref(db, 'communiverse_classes');
+        const snapshot = await get(classesRef);
+        
+        selectElement.innerHTML = '<option value="" disabled selected>Select class</option>';
+
+        if (snapshot.exists()) {
+          const classesData = snapshot.val();
+          Object.values(classesData).forEach(classItem => {
+            if (classItem && classItem.strand) {
+              const className = `${classItem.strand} - ${classItem.section || 'General'} (Instructor: ${classItem.instructor || 'TBA'})`;
+              const option = document.createElement('option');
+              option.value = classItem.strand;
+              option.textContent = className;
+              selectElement.appendChild(option);
+            }
+          });
+        }
+
+        if (selectElement.options.length <= 1) {
+          selectElement.innerHTML = '<option value="" disabled selected>No classes available yet</option>';
+        }
+      } catch (error) {
+        console.error("Error loading classes:", error);
+        selectElement.innerHTML = '<option value="" disabled selected>Failed to load classes</option>';
+      }
+    }
+
+    loadClasses();
+
+    document.getElementById('studentRegisterForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = document.getElementById('submitBtn');
+      const fullname = document.getElementById('studentName').value.trim();
+      const email = document.getElementById('studentEmail').value.trim();
+      const password = document.getElementById('studentPassword').value;
+      const gradeSection = document.getElementById('studentGradeSection').value;
+
+      if (!gradeSection) {
+        alert("Please select a class.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Creating Account...";
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        await set(ref(db, `registeredUsers/${user.uid}`), {
+          fullname,
+          email,
+          role: 'student',
+          strand: gradeSection,
+          createdAt: Date.now()
+        });
+
+        alert("Student account successfully created! Please log in.");
+        window.location.href = "login.html";
+      } catch (error) {
+        alert("Registration Error: " + error.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Register as Student";
+      }
+    });
+  </script>
+</body>
+</html>

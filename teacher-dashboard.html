@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CommuniVerse - Teacher Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --accent-blue: #2563eb;
+      --accent-blue-hover: #1d4ed8;
+      --bg-dark: #f8fafc;
+      --panel-bg: #ffffff;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Logout Transition Overlay Effect */
+    #logout-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    #logout-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .logout-spinner-box {
+      text-align: center;
+      color: #fff;
+    }
+
+    .logout-spinner-box i {
+      font-size: 3rem;
+      color: var(--accent-blue);
+      margin-bottom: 1rem;
+      animation: fa-spin 1s linear infinite;
+    }
+
+    .logout-spinner-box h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.35rem;
+    }
+
+    .logout-spinner-box p {
+      font-size: 0.875rem;
+      color: #94a3b8;
+    }
+
+    /* Sidebar */
+    aside {
+      width: 260px;
+      background: var(--panel-bg);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 1.5rem 1rem;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 50;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      padding: 0 0.5rem;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: #eff6ff;
+      color: var(--accent-blue);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+    }
+
+    .brand-text h2 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .brand-text p {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      flex: 1;
+    }
+
+    .nav-item button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .nav-item button i {
+      width: 18px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .nav-item button:hover {
+      background: #f1f5f9;
+      color: var(--text-main);
+    }
+
+    .nav-item.active button {
+      background: #eff6ff;
+      color: var(--accent-blue);
+    }
+
+    /* Sidebar Footer User Card */
+    .sidebar-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .user-card {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar-icon {
+      width: 38px;
+      height: 38px;
+      background: var(--accent-blue);
+      color: #fff;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+
+    .user-details h4 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 140px;
+    }
+
+    .user-details p {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .btn-logout {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ef4444;
+      background: #fef2f2;
+      border: 1px solid #fee2e2;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .btn-logout i {
+      width: 18px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .btn-logout:hover {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    /* Main Area */
+    main {
+      margin-left: 260px;
+      flex: 1;
+      padding: 2.5rem;
+      min-height: 100vh;
+    }
+
+    .view-section {
+      display: none;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    /* Header Bar */
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 2rem;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+
+    .header-title h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .header-title p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    /* Profile Menu Dropdown */
+    .profile-menu-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .profile-trigger-btn {
+      background: #f1f5f9;
+      border: 1px solid var(--border-color);
+      padding: 0.5rem 0.85rem;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .profile-trigger-btn:hover {
+      background: #e2e8f0;
+      border-color: #cbd5e1;
+    }
+
+    .profile-trigger-avatar {
+      width: 32px;
+      height: 32px;
+      background: var(--accent-blue);
+      color: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .profile-dropdown-card {
+      display: none;
+      position: absolute;
+      top: calc(100% + 0.6rem);
+      right: 0;
+      width: 280px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      overflow: hidden;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .profile-dropdown-card.active {
+      display: block;
+    }
+
+    .profile-dropdown-header {
+      padding: 1.25rem;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .profile-dropdown-avatar-large {
+      width: 44px;
+      height: 44px;
+      background: var(--accent-blue);
+      color: #fff;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .profile-dropdown-info h4 {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .profile-dropdown-info p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      word-break: break-all;
+      margin-top: 0.2rem;
+    }
+
+    .profile-dropdown-body {
+      padding: 0.5rem 0;
+    }
+
+    .profile-menu-item {
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+
+    .profile-menu-item:hover {
+      background: #f1f5f9;
+    }
+
+    .profile-menu-item i {
+      color: var(--text-muted);
+      width: 18px;
+    }
+
+    .profile-menu-divider {
+      height: 1px;
+      background: var(--border-color);
+      margin: 0.35rem 0;
+    }
+
+    .btn-create {
+      background: var(--accent-blue);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+      transition: background 0.2s ease;
+    }
+
+    .btn-create:hover {
+      background: var(--accent-blue-hover);
+    }
+
+    /* Overview Stats Grid */
+    .overview-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: #eff6ff;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .stat-info h3 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .stat-info p {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Activity & Table Card */
+    .activity-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      margin-bottom: 2rem;
+    }
+
+    .activity-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .activity-card-header h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .activity-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .activity-table th {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .activity-table td {
+      font-size: 0.85rem;
+      color: var(--text-main);
+      padding: 1rem 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-weight: 500;
+    }
+
+    .activity-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .status-badge.completed {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+
+    /* Classes & Strands View Grid */
+    .strands-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .strand-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .strand-card:hover {
+      border-color: var(--accent-blue);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+    }
+
+    .strand-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .strand-title-group h3 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+    }
+
+    .strand-title-group p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .btn-icon-action {
+      background: #f1f5f9;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+    }
+
+    .btn-icon-action.edit:hover {
+      background: #eff6ff;
+      color: var(--accent-blue);
+    }
+
+    .btn-icon-action.delete:hover {
+      background: #fee2e2;
+      color: #ef4444;
+    }
+
+    .strand-count-badge {
+      background: #eff6ff;
+      color: var(--accent-blue);
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .strand-sections-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .section-pill {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.4rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .instructor-pill {
+      background: #f0fdf4;
+      border: 1px solid #dcfce7;
+      color: #16a34a;
+      padding: 0.4rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .strand-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-color);
+      padding-top: 1.25rem;
+      margin-top: auto;
+      gap: 0.5rem;
+    }
+
+    .view-class-link {
+      background: transparent;
+      border: none;
+      color: var(--accent-blue);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .view-class-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Class Roster Modal */
+    .class-list-modal, .create-class-modal, .edit-class-modal, .enroll-student-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .class-list-modal.active, .create-class-modal.active, .edit-class-modal.active, .enroll-student-modal.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 750px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 1.5rem 1.75rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .btn-close-modal {
+      background: #f1f5f9;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .btn-close-modal:hover {
+      background: #e2e8f0;
+      color: var(--text-main);
+    }
+
+    .modal-body {
+      padding: 1.75rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .student-roster-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .student-roster-table th {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .student-roster-table td {
+      font-size: 0.85rem;
+      color: var(--text-main);
+      padding: 0.85rem 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-weight: 500;
+    }
+
+    .student-roster-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .btn-delete-student {
+      background: #fef2f2;
+      border: 1px solid #fee2e2;
+      color: #ef4444;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: background 0.2s;
+    }
+
+    .btn-delete-student:hover {
+      background: #fee2e2;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 1.25rem;
+      margin-top: 0.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .form-control {
+      width: 100%;
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      color: var(--text-main);
+      font-family: var(--font-family);
+      font-size: 0.875rem;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      background: #fff;
+    }
+
+    /* Missions View Styling */
+    .mission-form-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .mission-form-card.active {
+      display: block;
+    }
+
+    .missions-published-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .published-mission-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .published-mission-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mini-strand-badge {
+      background: #eff6ff;
+      color: var(--accent-blue);
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .btn-delete-mission {
+      background: #fef2f2;
+      border: 1px solid #fee2e2;
+      color: #ef4444;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-delete-mission:hover {
+      background: #fee2e2;
+    }
+
+    /* Submissions Folder Cards Grid Styles */
+    .folders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .folder-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .folder-card:hover {
+      border-color: var(--accent-blue);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+    }
+
+    .folder-icon-box {
+      width: 48px;
+      height: 48px;
+      background: #eff6ff;
+      color: var(--accent-blue);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .folder-meta h4 {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.15rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 170px;
+    }
+
+    .folder-meta p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Logout Transition Overlay Effect -->
+  <div id="logout-overlay">
+    <div class="logout-spinner-box">
+      <i class="fa-solid fa-circle-notch"></i>
+      <h3>Logging Out...</h3>
+      <p>Securely ending your instructor session.</p>
+    </div>
+  </div>
+
+  <!-- Sidebar Navigation -->
+  <aside>
+    <div>
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-puzzle-piece"></i>
+        </div>
+        <div class="brand-text">
+          <h2>CommuniVerse</h2>
+          <p>Teacher Portal</p>
+        </div>
+      </div>
+
+      <ul class="nav-menu">
+        <li class="nav-item active" data-target="overview-view">
+          <button><i class="fa-solid fa-chart-pie"></i> <span>Overview</span></button>
+        </li>
+        <li class="nav-item" data-target="classes-view">
+          <button><i class="fa-solid fa-users"></i> <span>Classes & Strands</span></button>
+        </li>
+        <li class="nav-item" data-target="students-view">
+          <button><i class="fa-solid fa-graduation-cap"></i> <span>Student Accounts</span></button>
+        </li>
+        <li class="nav-item" data-target="submissions-view">
+          <button><i class="fa-solid fa-folder-open"></i> <span>Student Submissions</span></button>
+        </li>
+        <li class="nav-item" data-target="missions-view">
+          <button><i class="fa-solid fa-list-check"></i> <span>Missions & Quizzes</span></button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-card">
+        <div id="teacher-avatar" class="user-avatar-icon">T</div>
+        <div class="user-details">
+          <h4 id="teacher-name">Teacher</h4>
+          <p id="teacher-role-label">Instructor Account</p>
+        </div>
+      </div>
+      <button id="logoutBtn" class="btn-logout">
+        <i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main>
+    
+    <!-- OVERVIEW VIEW -->
+    <div id="overview-view" class="view-section active">
+      <header class="dashboard-header">
+        <div class="header-title">
+          <h1 id="overview-welcome">Instructor Dashboard</h1>
+          <p>Monitor student progress, handle strand rosters, and deploy learning missions.</p>
+        </div>
+
+        <div class="header-actions">
+          <div class="profile-menu-container">
+            <button class="profile-trigger-btn" id="profileDropdownBtn">
+              <div class="profile-trigger-avatar" id="header-avatar-initial">T</div>
+              <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: var(--text-muted);"></i>
+            </button>
+
+            <div class="profile-dropdown-card" id="profileDropdownCard">
+              <div class="profile-dropdown-header">
+                <div class="profile-dropdown-avatar-large" id="menu-avatar-initial">T</div>
+                <div class="profile-dropdown-info">
+                  <h4 id="dropdown-user-name">Loading...</h4>
+                  <p id="dropdown-user-email">loading@gmail.com</p>
+                </div>
+              </div>
+              <div class="profile-dropdown-body">
+                <button class="profile-menu-item">
+                  <i class="fa-regular fa-user"></i> <span>My Profile</span>
+                </button>
+                <button class="profile-menu-item">
+                  <i class="fa-solid fa-sliders"></i> <span>Account Settings</span>
+                </button>
+                <div class="profile-menu-divider"></div>
+                <button class="profile-menu-item profile-logout-action" style="color: #ef4444;">
+                  <i class="fa-solid fa-right-from-bracket" style="color: #ef4444;"></i> <span>Log Out</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="overview-stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+          <div class="stat-info"><h3 id="stat-total-students">0</h3><p>Total Students</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #f0fdf4; color: #16a34a;"><i class="fa-solid fa-building-columns"></i></div>
+          <div class="stat-info"><h3 id="stat-total-classes">0</h3><p>Active Strands</p></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #fef3c7; color: #d97706;"><i class="fa-solid fa-list-check"></i></div>
+          <div class="stat-info"><h3 id="stat-total-missions">0</h3><p>Active Missions</p></div>
+        </div>
+      </div>
+
+      <div class="activity-card">
+        <div class="activity-card-header">
+          <h3>Registered Students Directory</h3>
+        </div>
+        <table class="activity-table">
+          <thead>
+            <tr>
+              <th>Full Name</th>
+              <th>Email Address</th>
+              <th>Strand / Track</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="overview-students-tbody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CLASSES & STRANDS VIEW -->
+    <div id="classes-view" class="view-section">
+      <header class="dashboard-header">
+        <div class="header-title">
+          <h1>Classes & Strands Management</h1>
+          <p>Create strand sections, manage class rosters, and assign enrolled users.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-create" id="openCreateClassModalBtn">
+            <i class="fa-solid fa-plus"></i> Create New Strand Class
+          </button>
+        </div>
+      </header>
+
+      <div class="strands-grid" id="strands-grid-container">
+        <!-- Dynamically populated -->
+      </div>
+    </div>
+
+    <!-- STUDENT ACCOUNTS VIEW -->
+    <div id="students-view" class="view-section">
+      <header class="dashboard-header">
+        <div class="header-title">
+          <h1>Student Accounts Management</h1>
+          <p>Review all registered student accounts, assign XP, or remove invalid accounts.</p>
+        </div>
+      </header>
+
+      <div class="activity-card">
+        <div class="activity-card-header">
+          <h3>All Registered Students</h3>
+        </div>
+        <table class="activity-table">
+          <thead>
+            <tr>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>Strand</th>
+              <th>XP Score</th>
+              <th style="text-align: right;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="all-students-roster-tbody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- STUDENT SUBMISSIONS VIEW -->
+    <div id="submissions-view" class="view-section">
+      <header class="dashboard-header">
+        <div class="header-title">
+          <h1>Student Submissions Portal</h1>
+          <p>Explore created classes and inspect registered user submissions by folder.</p>
+        </div>
+      </header>
+
+      <div class="strands-grid" id="submissions-classes-container">
+        <!-- Dynamically populated based on created classes -->
+      </div>
+    </div>
+
+    <!-- MISSIONS & QUIZZES VIEW -->
+    <div id="missions-view" class="view-section">
+      <header class="dashboard-header">
+        <div class="header-title">
+          <h1>Missions & Quizzes Management</h1>
+          <p>Deploy interactive missions and track submissions from students.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-create" id="toggleMissionFormBtn">
+            <i class="fa-solid fa-plus"></i> Create Mission
+          </button>
+        </div>
+      </header>
+
+      <div class="mission-form-card" id="missionFormCard">
+        <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1rem;">Publish New Mission</h3>
+        <form id="createMissionForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="missionTitle">Mission Title</label>
+              <input type="text" id="missionTitle" class="form-control" placeholder="e.g. PHP Database Integration" required>
+            </div>
+            <div class="form-group">
+              <label for="missionStrand">Target Strand / Class</label>
+              <select id="missionStrand" class="form-control">
+                <!-- Dynamically populated options excluding specific strands -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="missionDesc">Mission Description / Instructions</label>
+              <textarea id="missionDesc" class="form-control" rows="3" placeholder="Provide detailed instructions for the students..." required></textarea>
+            </div>
+            <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 0.5rem;">
+              <button type="button" class="btn-icon-action" id="cancelMissionBtn" style="width: auto; padding: 0.75rem 1.25rem; border-radius: 10px; font-weight: 700;">Cancel</button>
+              <button type="submit" class="btn-create">Publish Mission</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="missions-published-grid" id="publishedMissionsGrid">
+        <!-- Dynamically populated -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Class Roster View Modal -->
+  <div class="class-list-modal" id="classRosterModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="rosterModalTitle">Class Roster</h3>
+        <div style="display: flex; gap: 0.75rem; align-items: center;">
+          <button class="btn-create" id="openEnrollStudentModalBtn" style="padding: 0.5rem 1rem; font-size: 0.78rem;">
+            <i class="fa-solid fa-user-plus"></i> Enroll User
+          </button>
+          <button class="btn-close-modal" id="closeRosterModalBtn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <table class="student-roster-table">
+          <thead>
+            <tr>
+              <th>Enrolled User Full Name</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th style="text-align: right;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="rosterModalTableBody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enroll Student to Class Modal -->
+  <div class="enroll-student-modal" id="enrollStudentModal">
+    <div class="modal-card" style="max-width: 450px;">
+      <div class="modal-header">
+        <h3>Enroll User to Class</h3>
+        <button class="btn-close-modal" id="closeEnrollModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="enrollStudentForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="selectStudentToEnroll">Select Registered User</label>
+              <select id="selectStudentToEnroll" class="form-control" required>
+                <!-- Populated dynamically with users not yet enrolled in this class -->
+              </select>
+            </div>
+            <div style="margin-top: 0.5rem;">
+              <button type="submit" class="btn-create" style="width: 100%; justify-content: center;">Confirm Enrollment</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Student Submissions Inspector Modal (Showing Folders) -->
+  <div class="class-list-modal" id="studentSubmissionsModal">
+    <div class="modal-card" style="max-width: 850px;">
+      <div class="modal-header">
+        <h3 id="submissionsModalTitle">Class Submissions Folders</h3>
+        <button class="btn-close-modal" id="closeSubmissionsModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">Select an enrolled user's folder below to inspect all files and submissions uploaded from their account.</p>
+        <div id="submissionsFoldersGrid" class="folders-grid">
+          <!-- Dynamically populated student folder cards -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Individual Student Files Folder Contents Modal -->
+  <div class="class-list-modal" id="studentFolderFilesModal">
+    <div class="modal-card" style="max-width: 750px;">
+      <div class="modal-header">
+        <h3 id="folderFilesModalTitle">Student Submissions Folder</h3>
+        <button class="btn-close-modal" id="closeFolderFilesModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <table class="student-roster-table">
+          <thead>
+            <tr>
+              <th>File / Mission Name</th>
+              <th>File Type</th>
+              <th>Date Submitted</th>
+              <th style="text-align: right;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="folderFilesModalTableBody">
+            <!-- Dynamically populated file items -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Strand Modal -->
+  <div class="create-class-modal" id="createClassModal">
+    <div class="modal-card" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3>Create New Strand Class</h3>
+        <button class="btn-close-modal" id="closeCreateClassModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="createClassForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="newStrandName">Strand Name</label>
+              <input type="text" id="newStrandName" class="form-control" placeholder="e.g. ICT Animation" required>
+            </div>
+            <div class="form-group">
+              <label for="newSectionName">Section Name</label>
+              <input type="text" id="newSectionName" class="form-control" placeholder="e.g. Grade 12 Atienza" required>
+            </div>
+            <div class="form-group">
+              <label for="newInstructorName">Instructor Name</label>
+              <input type="text" id="newInstructorName" class="form-control" placeholder="e.g. Mr. John Doe" required>
+            </div>
+            <div style="margin-top: 0.5rem;">
+              <button type="submit" class="btn-create" style="width: 100%; justify-content: center;">Save Strand Class</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+
+  <!-- Edit Strand Modal -->
+  <div class="edit-class-modal" id="editClassModal">
+    <div class="modal-card" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3>Edit Strand Class</h3>
+        <button class="btn-close-modal" id="closeEditClassModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="editClassForm">
+          <input type="hidden" id="editClassFirebaseId">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="editStrandName">Strand Name</label>
+              <input type="text" id="editStrandName" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="editSectionName">Section Name</label>
+              <input type="text" id="editSectionName" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="editInstructorName">Instructor Name</label>
+              <input type="text" id="editInstructorName" class="form-control" required>
+            </div>
+            <div style="margin-top: 0.5rem;">
+              <button type="submit" class="btn-create" style="width: 100%; justify-content: center;">Update Strand Class</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+
+  <!-- Firebase SDKs and Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+    import { getDatabase, ref, onValue, set, update, remove, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCG8iQlK2LeiwUkmfzF4I-_20DnRW-33jk",
+      authDomain: "pnhs-election-portal.firebaseapp.com",
+      databaseURL: "https://pnhs-election-portal-default-rtdb.firebaseio.com",
+      projectId: "pnhs-election-portal",
+      storageBucket: "pnhs-election-portal.firebasestorage.app",
+      messagingSenderId: "290654124306",
+      appId: "1:290654124306:web:427f64ef9de55695a75bcb",
+      measurementId: "G-TXTVT32258"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+      let currentTeacherName = "Teacher";
+      let currentTeacherEmail = "teacher@gmail.com";
+
+      const teacherNameEl = document.getElementById('teacher-name');
+      const teacherAvatarEl = document.getElementById('teacher-avatar');
+      const teacherRoleLabel = document.getElementById('teacher-role-label');
+      const overviewWelcome = document.getElementById('overview-welcome');
+
+      const profileDropdownBtn = document.getElementById('profileDropdownBtn');
+      const profileDropdownCard = document.getElementById('profileDropdownCard');
+      const headerAvatarInitial = document.getElementById('header-avatar-initial');
+      const menuAvatarInitial = document.getElementById('menu-avatar-initial');
+      const dropdownUserName = document.getElementById('dropdown-user-name');
+      const dropdownUserEmail = document.getElementById('dropdown-user-email');
+      const logoutOverlay = document.getElementById('logout-overlay');
+
+      if (profileDropdownBtn && profileDropdownCard) {
+        profileDropdownBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          profileDropdownCard.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!profileDropdownCard.contains(e.target) && !profileDropdownBtn.contains(e.target)) {
+            profileDropdownCard.classList.remove('active');
+          }
+        });
+      }
+
+      function applyTeacherInfo(name, email, roleStr = 'Instructor Account') {
+        if (name) {
+          currentTeacherName = name;
+          teacherNameEl.textContent = name;
+          
+          const initial = name.charAt(0).toUpperCase();
+          teacherAvatarEl.textContent = initial;
+          headerAvatarInitial.textContent = initial;
+          menuAvatarInitial.textContent = initial;
+          
+          overviewWelcome.textContent = `Welcome back, ${name}!`;
+          teacherRoleLabel.textContent = roleStr;
+          dropdownUserName.textContent = name;
+        }
+        if (email) {
+          currentTeacherEmail = email;
+          dropdownUserEmail.textContent = email;
+        }
+      }
+
+      const localUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (localUser && (localUser.fullname || localUser.name)) {
+        const tName = localUser.fullname || localUser.name;
+        const tEmail = localUser.email || localUser.gmail || 'teacher@gmail.com';
+        applyTeacherInfo(tName, tEmail, localUser.role ? `${localUser.role} Account` : 'Instructor Account');
+      } else {
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            const fallbackName = user.displayName || user.email.split('@')[0];
+            applyTeacherInfo(fallbackName, user.email, 'Instructor Account');
+          }
+        });
+      }
+
+      function performLogout() {
+        if (confirm("Are you sure you want to log out?")) {
+          // Trigger smooth backdrop blur logout transition effect
+          if (logoutOverlay) {
+            logoutOverlay.classList.add('active');
+          }
+
+          localStorage.removeItem('currentUser');
+          
+          setTimeout(() => {
+            signOut(auth).then(() => {
+              window.location.href = "index.html";
+            }).catch(() => {
+              window.location.href = "index.html";
+            });
+          }, 800);
+        }
+      }
+
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          performLogout();
+        });
+      }
+
+      document.querySelectorAll('.profile-logout-action').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          performLogout();
+        });
+      });
+
+      let registeredUsersObj = {};
+      let students = [];
+      let customClasses = [];
+      let missions = [];
+      let submissionsObj = {};
+      let classEnrollmentsObj = {};
+      let currentActiveRosterClassId = null;
+
+      const usersRef = ref(db, 'registeredUsers');
+      onValue(usersRef, (snapshot) => {
+        registeredUsersObj = snapshot.val() || {};
+        const allUsers = Object.entries(registeredUsersObj).map(([key, val]) => ({
+          firebaseId: key,
+          ...val,
+          fullname: val.fullname || val.name || val.username || 'User'
+        }));
+
+        // Filter out teacher, instructor, or admin accounts so only student accounts show up
+        students = allUsers.filter(user => {
+          const role = (user.role || '').toLowerCase();
+          const email = (user.email || user.gmail || '').toLowerCase();
+          return role !== 'teacher' && 
+                 role !== 'instructor' && 
+                 role !== 'admin' && 
+                 !email.includes('teacher') && 
+                 !email.includes('instructor');
+        });
+
+        refreshDashboardData();
+      });
+
+      const classesRef = ref(db, 'communiverse_classes');
+      onValue(classesRef, (snapshot) => {
+        const classesObj = snapshot.val() || {};
+        customClasses = Object.entries(classesObj).map(([key, val]) => ({
+          firebaseId: key,
+          ...val
+        }));
+        refreshDashboardData();
+      });
+
+      const enrollmentsRef = ref(db, 'communiverse_class_enrollments');
+      onValue(enrollmentsRef, (snapshot) => {
+        classEnrollmentsObj = snapshot.val() || {};
+        refreshDashboardData();
+      });
+
+      const missionsRef = ref(db, 'communiverse_missions');
+      onValue(missionsRef, (snapshot) => {
+        const missionsObj = snapshot.val() || {};
+        missions = Object.entries(missionsObj).map(([key, val]) => ({
+          firebaseId: key,
+          ...val
+        }));
+        refreshDashboardData();
+      });
+
+      const submissionsRef = ref(db, 'communiverse_submissions');
+      onValue(submissionsRef, (snapshot) => {
+        submissionsObj = snapshot.val() || {};
+        refreshDashboardData();
+      });
+
+      function updateMissionStrandDropdown() {
+        const missionStrandSelect = document.getElementById('missionStrand');
+        if (!missionStrandSelect) return;
+
+        let classesToRender = customClasses;
+        if (classesToRender.length === 0) {
+          classesToRender = [
+            { firebaseId: 'default-ict', strand: 'ICT Animation & Programming', section: 'Grade 12 Atienza', instructor: currentTeacherName }
+          ];
+        }
+
+        const excludedStrands = ["ICTstrand", "Stemstrand", "Humssstrand", "ABMstrand"];
+
+        missionStrandSelect.innerHTML = classesToRender
+          .filter(cls => !excludedStrands.includes(cls.strand))
+          .map(cls => `<option value="${cls.strand}">${cls.strand} (${cls.section || 'General'})</option>`)
+          .join('');
+
+        if (!missionStrandSelect.innerHTML.trim()) {
+          missionStrandSelect.innerHTML = `<option value="General Class">General Class</option>`;
+        }
+      }
+
+      function refreshDashboardData() {
+        document.getElementById('stat-total-students').textContent = students.length;
+        document.getElementById('stat-total-classes').textContent = customClasses.length || 1;
+        document.getElementById('stat-total-missions').textContent = missions.length;
+
+        updateMissionStrandDropdown();
+
+        const overviewStudentsTbody = document.getElementById('overview-students-tbody');
+        if (students.length > 0) {
+          overviewStudentsTbody.innerHTML = students.slice(0, 5).map(st => `
+            <tr>
+              <td style="font-weight: 700;">${st.fullname}</td>
+              <td>${st.email || st.gmail || 'N/A'}</td>
+              <td><span class="status-badge" style="background: #eff6ff; color: var(--accent-blue);">${st.strand || 'General ICT'}</span></td>
+              <td><span class="status-badge completed">Active</span></td>
+            </tr>
+          `).join('');
+        } else {
+          overviewStudentsTbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No registered students found in database.</td></tr>`;
+        }
+
+        const allStudentsRosterTbody = document.getElementById('all-students-roster-tbody');
+        if (students.length > 0) {
+          allStudentsRosterTbody.innerHTML = students.map(st => `
+            <tr>
+              <td style="font-weight: 700;">${st.fullname}</td>
+              <td>${st.email || st.gmail || 'N/A'}</td>
+              <td>${st.strand || 'General ICT Strand'}</td>
+              <td><span class="status-badge" style="background: #f3e8ff; color: #9333ea;">${st.xp || 100} XP</span></td>
+              <td style="text-align: right;">
+                <button class="btn-delete-student" onclick="window.deleteStudentAccount('${st.firebaseId}')"><i class="fa-solid fa-trash"></i> Remove</button>
+              </td>
+            </tr>
+          `).join('');
+        } else {
+          allStudentsRosterTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No student accounts registered.</td></tr>`;
+        }
+
+        const strandsGridContainer = document.getElementById('strands-grid-container');
+        let classesToRender = customClasses;
+        if (classesToRender.length === 0) {
+          classesToRender = [
+            { firebaseId: 'default-ict', strand: 'ICT Animation & Programming', section: 'Grade 12 Atienza', instructor: currentTeacherName }
+          ];
+        }
+
+        strandsGridContainer.innerHTML = classesToRender.map(cls => {
+          const classEnrollmentMap = classEnrollmentsObj[cls.firebaseId] || {};
+          const enrolledCount = Object.keys(classEnrollmentMap).length;
+          const assignedInstructor = cls.instructor || currentTeacherName;
+
+          return `
+            <div class="strand-card">
+              <div class="strand-card-header">
+                <div class="strand-title-group">
+                  <h3>${cls.strand}</h3>
+                  <p>Section: ${cls.section || 'Grade 12'}</p>
+                </div>
+                <div class="strand-count-badge">${enrolledCount} Enrolled User${enrolledCount === 1 ? '' : 's'}</div>
+              </div>
+              <div class="strand-sections-box">
+                <span class="section-pill"><i class="fa-solid fa-layer-group"></i> ${cls.section || 'Grade 12 Section'}</span>
+                <span class="instructor-pill"><i class="fa-solid fa-chalkboard-user"></i> ${assignedInstructor}</span>
+              </div>
+              <div class="strand-card-footer">
+                <button class="view-class-link" onclick="window.openRosterModal('${cls.firebaseId}', '${cls.strand}', '${cls.section || 'Grade 12'}')">
+                  <i class="fa-solid fa-users-viewfinder"></i> View Enrolled Roster
+                </button>
+                <div style="display: flex; gap: 0.4rem;">
+                  <button class="btn-icon-action edit" onclick="window.openEditClassModal('${cls.firebaseId}', '${cls.strand}', '${cls.section || ''}', '${assignedInstructor}')"><i class="fa-solid fa-pen"></i></button>
+                  <button class="btn-icon-action delete" onclick="window.deleteStrandClass('${cls.firebaseId}')"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        const submissionsClassesContainer = document.getElementById('submissions-classes-container');
+        submissionsClassesContainer.innerHTML = classesToRender.map(cls => {
+          const classEnrollmentMap = classEnrollmentsObj[cls.firebaseId] || {};
+          const enrolledCount = Object.keys(classEnrollmentMap).length;
+          const assignedInstructor = cls.instructor || currentTeacherName;
+
+          return `
+            <div class="strand-card">
+              <div class="strand-card-header">
+                <div class="strand-title-group">
+                  <h3>${cls.strand}</h3>
+                  <p>Section: ${cls.section || 'Grade 12'}</p>
+                </div>
+                <div class="strand-count-badge" style="background: #f0fdf4; color: #16a34a;"><i class="fa-solid fa-folder-closed"></i> ${enrolledCount} Enrolled</div>
+              </div>
+              <div class="strand-sections-box">
+                <span class="section-pill"><i class="fa-solid fa-layer-group"></i> ${cls.section || 'Grade 12 Section'}</span>
+                <span class="instructor-pill"><i class="fa-solid fa-chalkboard-user"></i> ${assignedInstructor}</span>
+              </div>
+              <div class="strand-card-footer">
+                <button class="view-class-link" onclick="window.openSubmissionsModal('${cls.firebaseId}', '${cls.strand}', '${cls.section || 'Grade 12'}')">
+                  <i class="fa-solid fa-folder-open"></i> View All Registered User Submissions
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        const publishedMissionsGrid = document.getElementById('publishedMissionsGrid');
+        if (missions.length > 0) {
+          publishedMissionsGrid.innerHTML = missions.map(m => `
+            <div class="published-mission-card">
+              <div class="published-mission-header">
+                <span class="mini-strand-badge">${m.strand}</span>
+                <button class="btn-delete-mission" onclick="window.deleteMission('${m.firebaseId}')"><i class="fa-solid fa-trash"></i></button>
+              </div>
+              <div>
+                <h4>${m.title}</h4>
+                <p style="margin-top: 0.5rem; color: var(--text-muted); font-size: 0.85rem;">${m.desc}</p>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          publishedMissionsGrid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 2rem;">No missions deployed yet. Click 'Create Mission' above.</div>`;
+        }
+      }
+
+      window.deleteStudentAccount = function(firebaseId) {
+        if (confirm("Are you sure you want to delete this student account?")) {
+          remove(ref(db, `registeredUsers/${firebaseId}`)).then(() => {
+            alert("Student account successfully deleted.");
+          });
+        }
+      };
+
+      window.deleteStrandClass = function(firebaseId) {
+        if (firebaseId === 'default-ict') {
+          alert("Default strand class cannot be deleted.");
+          return;
+        }
+        if (confirm("Are you sure you want to delete this strand class?")) {
+          remove(ref(db, `communiverse_classes/${firebaseId}`)).then(() => {
+            remove(ref(db, `communiverse_class_enrollments/${firebaseId}`)).then(() => {
+              alert("Strand class successfully deleted.");
+            });
+          });
+        }
+      };
+
+      window.deleteMission = function(firebaseId) {
+        if (confirm("Are you sure you want to delete this mission?")) {
+          remove(ref(db, `communiverse_missions/${firebaseId}`)).then(() => {
+            remove(ref(db, `communiverse_user_missions/${firebaseId}`)).then(() => {
+              alert("Mission successfully deleted.");
+            });
+          });
+        }
+      };
+
+      const classRosterModal = document.getElementById('classRosterModal');
+      const closeRosterModalBtn = document.getElementById('closeRosterModalBtn');
+      const rosterModalTitle = document.getElementById('rosterModalTitle');
+      const rosterModalTableBody = document.getElementById('rosterModalTableBody');
+
+      window.openRosterModal = function(classId, strandName, sectionName) {
+        currentActiveRosterClassId = classId;
+        rosterModalTitle.textContent = `${strandName} (${sectionName}) Enrolled Users`;
+        
+        const classEnrollmentMap = classEnrollmentsObj[classId] || {};
+        const enrolledStudentIds = Object.keys(classEnrollmentMap);
+        const enrolledStudents = students.filter(st => enrolledStudentIds.includes(st.firebaseId));
+
+        if (enrolledStudents.length > 0) {
+          rosterModalTableBody.innerHTML = enrolledStudents.map(st => `
+            <tr>
+              <td style="font-weight: 700;">${st.fullname}</td>
+              <td>${st.email || st.gmail || 'N/A'}</td>
+              <td><span class="status-badge completed">Enrolled</span></td>
+              <td style="text-align: right;">
+                <button class="btn-delete-student" onclick="window.unenrollStudent('${classId}', '${st.firebaseId}')"><i class="fa-solid fa-user-xmark"></i> Remove</button>
+              </td>
+            </tr>
+          `).join('');
+        } else {
+          rosterModalTableBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No users enrolled in this class yet. Click 'Enroll User' above.</td></tr>`;
+        }
+        classRosterModal.classList.add('active');
+      };
+
+      window.unenrollStudent = function(classId, studentId) {
+        if (confirm("Are you sure you want to remove this user from the class?")) {
+          remove(ref(db, `communiverse_class_enrollments/${classId}/${studentId}`)).then(() => {
+            alert("User unrolled from class successfully.");
+            window.openRosterModal(classId, document.getElementById('rosterModalTitle').textContent.split(' (')[0], '');
+          });
+        }
+      };
+
+      if (closeRosterModalBtn) {
+        closeRosterModalBtn.addEventListener('click', () => {
+          classRosterModal.classList.remove('active');
+        });
+      }
+
+      classRosterModal.addEventListener('click', (e) => {
+        if (e.target === classRosterModal) {
+          classRosterModal.classList.remove('active');
+        }
+      });
+
+      const enrollStudentModal = document.getElementById('enrollStudentModal');
+      const openEnrollStudentModalBtn = document.getElementById('openEnrollStudentModalBtn');
+      const closeEnrollModalBtn = document.getElementById('closeEnrollModalBtn');
+      const selectStudentToEnroll = document.getElementById('selectStudentToEnroll');
+      const enrollStudentForm = document.getElementById('enrollStudentForm');
+
+      if (openEnrollStudentModalBtn) {
+        openEnrollStudentModalBtn.addEventListener('click', () => {
+          const classEnrollmentMap = classEnrollmentsObj[currentActiveRosterClassId] || {};
+          const enrolledIds = Object.keys(classEnrollmentMap);
+          const availableStudents = students.filter(st => !enrolledIds.includes(st.firebaseId));
+
+          if (availableStudents.length > 0) {
+            selectStudentToEnroll.innerHTML = availableStudents.map(st => `
+              <option value="${st.firebaseId}">${st.fullname} (${st.email || st.gmail || 'No email'})</option>
+            `).join('');
+          } else {
+            selectStudentToEnroll.innerHTML = `<option value="">All registered users are already enrolled in this class.</option>`;
+          }
+          enrollStudentModal.classList.add('active');
+        });
+      }
+
+      if (closeEnrollModalBtn) {
+        closeEnrollModalBtn.addEventListener('click', () => {
+          enrollStudentModal.classList.remove('active');
+        });
+      }
+
+      enrollStudentModal.addEventListener('click', (e) => {
+        if (e.target === enrollStudentModal) {
+          enrollStudentModal.classList.remove('active');
+        }
+      });
+
+      if (enrollStudentForm) {
+        enrollStudentForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const studentId = selectStudentToEnroll.value;
+          if (studentId && currentActiveRosterClassId) {
+            set(ref(db, `communiverse_class_enrollments/${currentActiveRosterClassId}/${studentId}`), {
+              enrolledAt: new Date().toLocaleDateString()
+            }).then(() => {
+              alert("User successfully enrolled into the class!");
+              enrollStudentModal.classList.remove('active');
+              
+              const titleText = rosterModalTitle.textContent;
+              const strandPart = titleText.split(' (')[0];
+              const sectionPart = titleText.includes('(') ? titleText.split('(')[1].replace(')', '').replace(' Enrolled Users', '') : '';
+              window.openRosterModal(currentActiveRosterClassId, strandPart, sectionPart);
+            });
+          }
+        });
+      }
+
+      const studentSubmissionsModal = document.getElementById('studentSubmissionsModal');
+      const closeSubmissionsModalBtn = document.getElementById('closeSubmissionsModalBtn');
+      const submissionsModalTitle = document.getElementById('submissionsModalTitle');
+      const submissionsFoldersGrid = document.getElementById('submissionsFoldersGrid');
+
+      const studentFolderFilesModal = document.getElementById('studentFolderFilesModal');
+      const closeFolderFilesModalBtn = document.getElementById('closeFolderFilesModalBtn');
+      const folderFilesModalTitle = document.getElementById('folderFilesModalTitle');
+      const folderFilesModalTableBody = document.getElementById('folderFilesModalTableBody');
+
+      window.openSubmissionsModal = function(classId, strandName, sectionName) {
+        submissionsModalTitle.textContent = `${strandName} (${sectionName}) - Enrolled User Submissions Folders`;
+        
+        const classEnrollmentMap = classEnrollmentsObj[classId] || {};
+        const enrolledStudentIds = Object.keys(classEnrollmentMap);
+        const enrolledStudents = students.filter(st => enrolledStudentIds.includes(st.firebaseId));
+        
+        if (enrolledStudents.length > 0) {
+          submissionsFoldersGrid.innerHTML = enrolledStudents.map(st => {
+            const userSubData = submissionsObj[st.firebaseId];
+            let countLabel = "0 files submitted";
+            if (userSubData) {
+              if (typeof userSubData === 'object' && !userSubData.fileUrl) {
+                const fileKeys = Object.keys(userSubData);
+                countLabel = `${fileKeys.length} file${fileKeys.length === 1 ? '' : 's'} submitted`;
+              } else {
+                countLabel = "1 file submitted";
+              }
+            }
+
+            return `
+              <div class="folder-card" onclick="window.openStudentFolderFiles('${st.firebaseId}', '${encodeURIComponent(st.fullname)}')">
+                <div class="folder-icon-box">
+                  <i class="fa-solid fa-folder-open"></i>
+                </div>
+                <div class="folder-meta">
+                  <h4>${st.fullname}</h4>
+                  <p>${countLabel}</p>
+                </div>
+              </div>
+            `;
+          }).join('');
+        } else {
+          submissionsFoldersGrid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 2rem;">No registered users are currently enrolled in this class. Go to 'Classes & Strands' to enroll users.</div>`;
+        }
+        studentSubmissionsModal.classList.add('active');
+      };
+
+      window.openStudentFolderFiles = function(studentId, encodedName) {
+        const studentName = decodeURIComponent(encodedName);
+        folderFilesModalTitle.textContent = `${studentName}'s Folder - Submitted Files`;
+        
+        const userSubData = submissionsObj[studentId];
+        let fileEntries = [];
+
+        if (userSubData) {
+          if (typeof userSubData === 'object' && !userSubData.fileUrl) {
+            fileEntries = Object.entries(userSubData).map(([k, v]) => ({
+              id: k,
+              title: v.fileName || v.title || v.name || v.missionTitle || 'Mission Submission',
+              type: v.fileType || v.type || 'Document / Archive',
+              date: v.submittedAt || v.date || 'Recent',
+              url: v.fileUrl || v.url || '#'
+            }));
+          } else {
+            fileEntries = [{
+              id: 'single',
+              title: userSubData.fileName || userSubData.title || userSubData.missionTitle || 'Submitted File',
+              type: userSubData.fileType || 'Project Archive',
+              date: userSubData.submittedAt || 'Recent',
+              url: userSubData.fileUrl || '#'
+            }];
+          }
+        }
+
+        if (fileEntries.length === 0 && submissionsObj) {
+          Object.entries(submissionsObj).forEach(([subKey, subVal]) => {
+            if (subVal && typeof subVal === 'object') {
+              if (subVal.userId === studentId || subVal.studentId === studentId || subKey === studentId) {
+                fileEntries.push({
+                  id: subKey,
+                  title: subVal.fileName || subVal.title || subVal.missionTitle || 'Mission Submission',
+                  type: subVal.fileType || subVal.type || 'Document',
+                  date: subVal.submittedAt || subVal.date || 'Recent',
+                  url: subVal.fileUrl || subVal.url || '#'
+                });
+              }
+            }
+          });
+        }
+
+        if (fileEntries.length > 0) {
+          folderFilesModalTableBody.innerHTML = fileEntries.map(f => `
+            <tr>
+              <td style="font-weight: 700;"><i class="fa-regular fa-file-lines" style="color: var(--accent-blue); margin-right: 0.35rem;"></i> ${f.title}</td>
+              <td><span class="status-badge" style="background: #eff6ff; color: var(--accent-blue);">${f.type}</span></td>
+              <td>${f.date}</td>
+              <td style="text-align: right;">
+                <a href="${f.url}" target="_blank" class="status-badge completed" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem;"><i class="fa-solid fa-eye"></i> View File</a>
+              </td>
+            </tr>
+          `).join('');
+        } else {
+          folderFilesModalTableBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">No files found in ${studentName}'s folder.</td></tr>`;
+        }
+
+        studentFolderFilesModal.classList.add('active');
+      };
+
+      if (closeSubmissionsModalBtn) {
+        closeSubmissionsModalBtn.addEventListener('click', () => {
+          studentSubmissionsModal.classList.remove('active');
+        });
+      }
+
+      if (studentSubmissionsModal) {
+        studentSubmissionsModal.addEventListener('click', (e) => {
+          if (e.target === studentSubmissionsModal) {
+            studentSubmissionsModal.classList.remove('active');
+          }
+        });
+      }
+
+      if (closeFolderFilesModalBtn) {
+        closeFolderFilesModalBtn.addEventListener('click', () => {
+          studentFolderFilesModal.classList.remove('active');
+        });
+      }
+
+      if (studentFolderFilesModal) {
+        studentFolderFilesModal.addEventListener('click', (e) => {
+          if (e.target === studentFolderFilesModal) {
+            studentFolderFilesModal.classList.remove('active');
+          }
+        });
+      }
+
+      const navItems = document.querySelectorAll('.nav-item');
+      const viewSections = document.querySelectorAll('.view-section');
+
+      navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.preventDefault();
+          navItems.forEach(nav => nav.classList.remove('active'));
+          item.classList.add('active');
+
+          const targetId = item.getAttribute('data-target');
+          viewSections.forEach(section => {
+            if (section.id === targetId) {
+              section.classList.add('active');
+            } else {
+              section.classList.remove('active');
+            }
+          });
+        });
+      });
+
+      const createClassModal = document.getElementById('createClassModal');
+      const openCreateClassModalBtn = document.getElementById('openCreateClassModalBtn');
+      const closeCreateClassModalBtn = document.getElementById('closeCreateClassModalBtn');
+      const createClassForm = document.getElementById('createClassForm');
+
+      if (openCreateClassModalBtn) {
+        openCreateClassModalBtn.addEventListener('click', () => {
+          const instructorInput = document.getElementById('newInstructorName');
+          if (instructorInput && !instructorInput.value) {
+            instructorInput.value = currentTeacherName;
+          }
+          createClassModal.classList.add('active');
+        });
+      }
+
+      if (closeCreateClassModalBtn) {
+        closeCreateClassModalBtn.addEventListener('click', () => {
+          createClassModal.classList.remove('active');
+        });
+      }
+
+      createClassModal.addEventListener('click', (e) => {
+        if (e.target === createClassModal) {
+          createClassModal.classList.remove('active');
+        }
+      });
+
+      if (createClassForm) {
+        createClassForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const strandName = document.getElementById('newStrandName').value.trim();
+          const sectionName = document.getElementById('newSectionName').value.trim();
+          const instructorName = document.getElementById('newInstructorName').value.trim();
+
+          if (strandName && sectionName && instructorName) {
+            const newClassRef = push(ref(db, 'communiverse_classes'));
+            set(newClassRef, {
+              strand: strandName,
+              section: sectionName,
+              instructor: instructorName
+            }).then(() => {
+              alert("Strand class successfully created!");
+              createClassForm.reset();
+              createClassModal.classList.remove('active');
+            });
+          }
+        });
+      }
+
+      const editClassModal = document.getElementById('editClassModal');
+      const closeEditClassModalBtn = document.getElementById('closeEditClassModalBtn');
+      const editClassForm = document.getElementById('editClassForm');
+
+      window.openEditClassModal = function(firebaseId, currentStrand, currentSection, currentInstructor) {
+        document.getElementById('editClassFirebaseId').value = firebaseId;
+        document.getElementById('editStrandName').value = currentStrand;
+        document.getElementById('editSectionName').value = currentSection;
+        document.getElementById('editInstructorName').value = currentInstructor || currentTeacherName;
+        editClassModal.classList.add('active');
+      };
+
+      if (closeEditClassModalBtn) {
+        closeEditClassModalBtn.addEventListener('click', () => {
+          editClassModal.classList.remove('active');
+        });
+      }
+
+      editClassModal.addEventListener('click', (e) => {
+        if (e.target === editClassModal) {
+          editClassModal.classList.remove('active');
+        }
+      });
+
+      if (editClassForm) {
+        editClassForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const firebaseId = document.getElementById('editClassFirebaseId').value;
+          const updatedStrand = document.getElementById('editStrandName').value.trim();
+          const updatedSection = document.getElementById('editSectionName').value.trim();
+          const updatedInstructor = document.getElementById('editInstructorName').value.trim();
+
+          if (firebaseId && updatedStrand && updatedSection && updatedInstructor) {
+            update(ref(db, `communiverse_classes/${firebaseId}`), {
+              strand: updatedStrand,
+              section: updatedSection,
+              instructor: updatedInstructor
+            }).then(() => {
+              alert("Strand class successfully updated!");
+              editClassModal.classList.remove('active');
+            });
+          }
+        });
+      }
+
+      const missionFormCard = document.getElementById('missionFormCard');
+      const toggleMissionFormBtn = document.getElementById('toggleMissionFormBtn');
+      const cancelMissionBtn = document.getElementById('cancelMissionBtn');
+      const createMissionForm = document.getElementById('createMissionForm');
+
+      if (toggleMissionFormBtn) {
+        toggleMissionFormBtn.addEventListener('click', () => {
+          missionFormCard.classList.toggle('active');
+        });
+      }
+
+      if (cancelMissionBtn) {
+        cancelMissionBtn.addEventListener('click', () => {
+          missionFormCard.classList.remove('active');
+        });
+      }
+
+      if (createMissionForm) {
+        createMissionForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const title = document.getElementById('missionTitle').value.trim();
+          const strand = document.getElementById('missionStrand').value;
+          const desc = document.getElementById('missionDesc').value.trim();
+
+          if (title && desc) {
+            const newMissionRef = push(ref(db, 'communiverse_missions'));
+            const missionData = {
+              title,
+              strand,
+              desc,
+              createdAt: new Date().toLocaleDateString()
+            };
+
+            set(newMissionRef, missionData).then(() => {
+              const broadcastRef = ref(db, `communiverse_user_missions/${newMissionRef.key}`);
+              set(broadcastRef, missionData).then(() => {
+                alert("Mission successfully published and automatically sent to all target classes and user portals!");
+                createMissionForm.reset();
+                missionFormCard.classList.remove('active');
+              });
+            }).catch((error) => {
+              alert("Error publishing mission: " + error.message);
+            });
+          }
+        });
+      }
+
+    });
+  </script>
+
+</body>
+</html>

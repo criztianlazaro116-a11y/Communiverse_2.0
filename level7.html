@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Map - Boss Nexus / Mission Overview - CommuniVerse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-green: #10b981;
+      --hover-green: #059669;
+      --bg-dark: #0f172a;
+      --card-dark: #1e293b;
+      --sidebar-dark: #111827;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-dark);
+      background-image: linear-gradient(rgba(15, 23, 42, 0.82), rgba(15, 23, 42, 0.82)), url('pic2bg.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: var(--text-main);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 260px;
+      background: var(--sidebar-dark);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 1.5rem 1rem;
+      z-index: 10;
+    }
+
+    .sidebar-top {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding-left: 0.5rem;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: #ef4444;
+      color: #ffffff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .brand-text h1 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .brand-text span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .audio-toggles {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0 0.5rem;
+    }
+
+    .audio-btn {
+      flex: 1;
+      background: #334155;
+      color: var(--text-main);
+      border: none;
+      padding: 0.4rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      transition: background 0.2s;
+    }
+
+    .audio-btn.active {
+      background: #ef4444;
+      color: #fee2e2;
+    }
+
+    .nav-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      max-height: calc(100vh - 220px);
+      overflow-y: auto;
+    }
+
+    .nav-item a {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.65rem 1rem;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .nav-item.active a, .nav-item a:hover {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+    }
+
+    .sidebar-footer {
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .btn-back-dashboard {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.6rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .btn-back-dashboard:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      justify-content: space-between;
+    }
+
+    /* Top Bar Header */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fca5a5;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .user-stats-pill {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .stat-badge {
+      background: var(--card-dark);
+      border: 1px solid var(--border-color);
+      padding: 0.4rem 0.85rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    /* Center Stage Container */
+    .mission-stage-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 0;
+    }
+
+    .mission-card-box {
+      background: var(--card-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 820px;
+      min-height: 380px;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow-y: auto;
+    }
+
+    /* Dynamic Content Layout Styles per Step */
+    .mission-badge-tag {
+      background: #ef4444;
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 0.3rem 0.85rem;
+      border-radius: 20px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .mission-card-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.75rem;
+    }
+
+    .mission-card-desc {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      line-height: 1.5;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Options / Interactive Elements */
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+      max-width: 650px;
+      margin-bottom: 1.25rem;
+      text-align: left;
+    }
+
+    .option-card {
+      background: #111827;
+      border: 1px solid var(--border-color);
+      padding: 0.85rem 1.2rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.2s;
+    }
+
+    .option-card:hover {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.05);
+    }
+
+    .option-card.selected {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: #ef4444;
+      color: #fca5a5;
+    }
+
+    /* Grid for Learn Cards */
+    .learn-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 1rem;
+    }
+
+    .learn-sub-card {
+      background: #111827;
+      border: 1px solid var(--border-color);
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+    }
+
+    .learn-sub-card h4 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .learn-sub-card p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Tables for Learn */
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.8rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .custom-table th, .custom-table td {
+      padding: 0.55rem 0.8rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .custom-table th {
+      background: #111827;
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .custom-table td {
+      color: var(--text-muted);
+    }
+
+    /* Textareas and Inputs */
+    .text-input-area {
+      width: 100%;
+      max-width: 650px;
+      height: 85px;
+      background: #111827;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 0.8rem;
+      color: var(--text-main);
+      font-family: var(--font-family);
+      font-size: 0.85rem;
+      resize: none;
+      margin-bottom: 1rem;
+    }
+
+    .text-input-area:focus {
+      outline: none;
+      border-color: #ef4444;
+    }
+
+    /* Video Player Element for Step 5 (vid7.mp4) */
+    .video-container-box {
+      width: 100%;
+      max-width: 600px;
+      background: #0b0f19;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 0.85rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+    }
+
+    .video-container-box video {
+      width: 100%;
+      height: 200px;
+      display: block;
+      background: #000;
+      object-fit: cover;
+    }
+
+    /* Reflection Recording & Upload Styles */
+    .reflection-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 620px;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .webcam-preview-box {
+      width: 100%;
+      height: 200px;
+      background: #0b0f19;
+      border: 2px dashed var(--border-color);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .webcam-preview-box video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .webcam-placeholder-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+    }
+
+    .reflection-actions-row {
+      display: flex;
+      gap: 1rem;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .reflection-btn {
+      flex: 1;
+      background: #111827;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .reflection-btn:hover {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.05);
+    }
+
+    .reflection-btn.recording {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+
+    .file-input-hidden {
+      display: none;
+    }
+
+    /* Action Buttons */
+    .btn-action-custom {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .btn-action-custom:hover {
+      background: #dc2626;
+      transform: translateY(-2px);
+    }
+
+    /* Bottom Control Bar */
+    .bottom-control-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(51, 65, 85, 0.5);
+    }
+
+    .btn-nav-control {
+      background: var(--card-dark);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.2s;
+    }
+
+    .btn-nav-control:hover:not(:disabled) {
+      background: #334155;
+    }
+
+    .btn-nav-control:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .progress-track-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      width: 240px;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: var(--border-color);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      width: 10%;
+      height: 100%;
+      background: #ef4444;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-step-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .btn-next-step {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .btn-next-step:hover:not(:disabled) {
+      background: #dc2626;
+      transform: translateY(-1px);
+    }
+
+    .btn-next-step:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="brand-container">
+        <div class="brand-icon">
+          <i class="fa-solid fa-skull"></i>
+        </div>
+        <div class="brand-text">
+          <h1>CommuniVerse</h1>
+          <span>Boss Nexus (Level 7 - Hardest)</span>
+        </div>
+      </div>
+
+      <!-- Audio Toggles -->
+      <div class="audio-toggles">
+        <button class="audio-btn active" id="music-toggle"><i class="fa-solid fa-music"></i> Music: ON</button>
+        <button class="audio-btn active" id="sfx-toggle"><i class="fa-solid fa-volume-high"></i> SFX: ON</button>
+      </div>
+
+      <!-- Steps Menu -->
+      <ul class="nav-menu" id="sidebar-menu">
+        <li class="nav-item active" data-step="1"><a class="nav-link"><i class="fa-solid fa-globe"></i> Mission</a></li>
+        <li class="nav-item" data-step="2"><a class="nav-link"><i class="fa-solid fa-chalkboard-user"></i> Professor Byte</a></li>
+        <li class="nav-item" data-step="3"><a class="nav-link"><i class="fa-solid fa-bolt"></i> Warm-Up</a></li>
+        <li class="nav-item" data-step="4"><a class="nav-link"><i class="fa-solid fa-book-open"></i> Learn</a></li>
+        <li class="nav-item" data-step="5"><a class="nav-link"><i class="fa-solid fa-binoculars"></i> Observe</a></li>
+        <li class="nav-item" data-step="6"><a class="nav-link"><i class="fa-solid fa-gamepad"></i> Practice</a></li>
+        <li class="nav-item" data-step="7"><a class="nav-link"><i class="fa-solid fa-comments"></i> Apply</a></li>
+        <li class="nav-item" data-step="8"><a class="nav-link"><i class="fa-solid fa-file-shield"></i> Knowledge Check</a></li>
+        <li class="nav-item" data-step="9"><a class="nav-link"><i class="fa-solid fa-pen-nib"></i> Reflection</a></li>
+        <li class="nav-item" data-step="10"><a class="nav-link"><i class="fa-solid fa-trophy"></i> Rewards</a></li>
+      </ul>
+    </div>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+      <a href="world-map.html" class="btn-back-dashboard">
+        <i class="fa-solid fa-arrow-left"></i> Exit to Dashboard
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content Stage -->
+  <main class="main-content">
+    
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="breadcrumb" id="breadcrumb-title">
+        <i class="fa-solid fa-skull"></i> Boss Nexus / Ultimate Mission Overview
+      </div>
+      <div class="user-stats-pill">
+        <div class="stat-badge"><i class="fa-solid fa-star" style="color: #fbbf24;"></i> <span id="user-xp-display">4,000</span> XP</div>
+        <div class="stat-badge"><i class="fa-solid fa-fire" style="color: #ef4444;"></i> <span id="user-streak-display">7</span> Day Streak</div>
+      </div>
+    </div>
+
+    <!-- Center Stage Mission Card / Dynamic Module Box -->
+    <div class="mission-stage-container">
+      <div class="mission-card-box" id="mission-card-content">
+        <!-- Dynamic Step Content Renders Here -->
+      </div>
+    </div>
+
+    <!-- Bottom Control Bar -->
+    <div class="bottom-control-bar">
+      <button class="btn-nav-control" id="btn-previous" disabled>
+        <i class="fa-solid fa-arrow-left"></i> Previous
+      </button>
+
+      <div class="progress-track-wrapper">
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-bar-fill" style="width: 10%;"></div>
+        </div>
+        <span class="progress-step-label" id="progress-step-label">Step 1 of 10</span>
+      </div>
+
+      <button class="btn-next-step" id="btn-next">
+        Next <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Interactive Script for Level 7: Boss Nexus (Hardest Level) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCG8iQlK2LeiwUkmfzF4I-_20DnRW-33jk",
+      authDomain: "pnhs-election-portal.firebaseapp.com",
+      databaseURL: "https://pnhs-election-portal-default-rtdb.firebaseio.com",
+      projectId: "pnhs-election-portal",
+      storageBucket: "pnhs-election-portal.firebasestorage.app",
+      messagingSenderId: "290654124306",
+      appId: "1:290654124306:web:427f64ef9de55695a75bcb",
+      measurementId: "G-TXTVT32258"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // DOM Elements
+    const userXpDisplay = document.getElementById('user-xp-display');
+    const userStreakDisplay = document.getElementById('user-streak-display');
+    const breadcrumbTitle = document.getElementById('breadcrumb-title');
+    const missionCardContent = document.getElementById('mission-card-content');
+    const btnPrevious = document.getElementById('btn-previous');
+    const btnNext = document.getElementById('btn-next');
+    const progressBarFill = document.getElementById('progress-bar-fill');
+    const progressStepLabel = document.getElementById('progress-step-label');
+    const sidebarItems = document.querySelectorAll('.sidebar .nav-menu .nav-item');
+    const musicToggle = document.getElementById('music-toggle');
+    const sfxToggle = document.getElementById('sfx-toggle');
+
+    // Audio Toggles
+    musicToggle.addEventListener('click', () => {
+      musicToggle.classList.toggle('active');
+      musicToggle.innerHTML = musicToggle.classList.contains('active') ? '<i class="fa-solid fa-music"></i> Music: ON' : '<i class="fa-solid fa-music"></i> Music: OFF';
+    });
+
+    sfxToggle.addEventListener('click', () => {
+      sfxToggle.classList.toggle('active');
+      sfxToggle.innerHTML = sfxToggle.classList.contains('active') ? '<i class="fa-solid fa-volume-high"></i> SFX: ON' : '<i class="fa-solid fa-volume-xmark"></i> SFX: OFF';
+    });
+
+    // 10 Steps Data Structure customized for Boss Nexus (Hardest Final Challenge)
+    const missionSteps = [
+      {
+        step: 1,
+        breadcrumb: '<i class="fa-solid fa-skull"></i> Boss Nexus / Ultimate Mission Overview',
+        render: () => `
+          <span class="mission-badge-tag">LEVEL 7 • THE HARDEST BOSS</span>
+          <h2 class="mission-card-title">Welcome to the Boss Nexus</h2>
+          <p class="mission-card-desc">You have reached the final and most challenging trial in CommuniVerse. Face the ultimate communication boss by testing every core skill you have mastered across all previous sectors!</p>
+          <button class="btn-action-custom" id="step-action-btn">
+            <i class="fa-solid fa-user-graduate"></i> Consult Professor Byte
+          </button>
+        `,
+        action: () => goToStep(2)
+      },
+      {
+        step: 2,
+        breadcrumb: '<i class="fa-solid fa-chalkboard-user"></i> Boss Nexus / Professor Byte Advice',
+        render: () => `
+          <div style="font-size: 2.5rem; color: #ef4444; margin-bottom: 0.5rem;"><i class="fa-solid fa-robot"></i></div>
+          <span class="mission-badge-tag">FINAL WARNING FROM PROFESSOR BYTE</span>
+          <h2 class="mission-card-title" style="font-size: 1.5rem;">Professor Byte Says:</h2>
+          <p class="mission-card-desc">"This is it! The Boss Nexus combines rhetoric, critical analysis, conflict resolution, and information synthesis into one massive gauntlet. Stay sharp, trust your training, and conquer the ultimate challenge!"</p>
+          <button class="btn-action-custom" id="step-action-btn">
+            <i class="fa-solid fa-bolt"></i> Begin Ultimate Warm-Up
+          </button>
+        `,
+        action: () => goToStep(3)
+      },
+      {
+        step: 3,
+        breadcrumb: '<i class="fa-solid fa-bolt"></i> Boss Nexus / Ultimate Warm-Up',
+        render: () => `
+          <span class="mission-badge-tag">ULTIMATE WARM-UP DRILL</span>
+          <h2 class="mission-card-title" style="font-size: 1.15rem; margin-bottom: 0.3rem;">When handling a high-stakes multidisciplinary conflict under extreme pressure, what is your first priority?</h2>
+          <div class="options-container" id="quiz-options">
+            <div class="option-card" data-correct="false"><i class="fa-solid fa-triangle-exclamation"></i> Dismiss opposing viewpoints immediately to save time.</div>
+            <div class="option-card" data-correct="true"><i class="fa-solid fa-circle-check"></i> Actively listen, isolate core misalignments, and establish common objectives.</div>
+            <div class="option-card" data-correct="false"><i class="fa-solid fa-ban"></i> Escalate emotional rhetoric to dominate the debate.</div>
+          </div>
+          <button class="btn-action-custom" id="step-action-btn" disabled style="opacity: 0.5;">
+            <i class="fa-solid fa-check"></i> Submit Answer (+100 XP)
+          </button>
+        `,
+        init: () => {
+          const cards = document.querySelectorAll('#quiz-options .option-card');
+          const submitBtn = document.getElementById('step-action-btn');
+          let selectedCorrect = false;
+
+          cards.forEach(card => {
+            card.addEventListener('click', () => {
+              cards.forEach(c => c.classList.remove('selected'));
+              card.classList.add('selected');
+              selectedCorrect = (card.getAttribute('data-correct') === 'true');
+              submitBtn.disabled = false;
+              submitBtn.style.opacity = '1';
+            });
+          });
+
+          submitBtn.addEventListener('click', () => {
+            if (selectedCorrect) {
+              alert("Brilliant! Active alignment under pressure is key. +100 XP added!");
+              goToStep(4);
+            } else {
+              alert("Incorrect! Review high-stakes strategic communication.");
+            }
+          });
+        }
+      },
+      {
+        step: 4,
+        breadcrumb: '<i class="fa-solid fa-book-open"></i> Boss Nexus / Advanced Masterclass Module',
+        render: () => `
+          <div style="width: 100%; text-align: left;">
+            <h2 class="mission-card-title" style="font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">
+              <i class="fa-solid fa-shield-halved" style="color: #ef4444;"></i> The Boss Nexus Masterclass Protocols
+            </h2>
+            <p class="mission-card-desc" style="text-align: left; margin-bottom: 0.85rem; font-size: 0.8rem;">Review the master framework required to defeat complex systemic communication barriers.</p>
+            
+            <div class="learn-grid">
+              <div class="learn-sub-card">
+                <h4><i class="fa-solid fa-bullseye" style="color: #fca5a5;"></i> 1. Precision Messaging</h4>
+                <p>Eliminating ambiguity in multi-layered enterprise environments.</p>
+              </div>
+              <div class="learn-sub-card">
+                <h4><i class="fa-solid fa-network-wired" style="color: #34d399;"></i> 2. Systemic Integration</h4>
+                <p>Synthesizing technical telemetry and human behavioral data seamlessly.</p>
+              </div>
+              <div class="learn-sub-card">
+                <h4><i class="fa-solid fa-fire-flame-curved" style="color: #fbbf24;"></i> 3. Crisis Rhetoric</h4>
+                <p>Maintaining composure and steering public narratives during a crisis.</p>
+              </div>
+              <div class="learn-sub-card">
+                <h4><i class="fa-solid fa-chess" style="color: #60a5fa;"></i> 4. Adaptive Strategy</h4>
+                <p>Pivoting communication tactics dynamically as stakeholder demands shift.</p>
+              </div>
+            </div>
+
+            <table class="custom-table">
+              <thead>
+                <tr><th>Challenge Tier</th><th>Core Obstacle</th><th>Master Solution</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Boss Tier (Level 7)</td><td>Fragmented stakeholder ecosystems</td><td>Unified cross-functional synthesis & transparent alignment</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <button class="btn-action-custom" id="step-action-btn" style="margin-top: 0.4rem;">
+            <i class="fa-solid fa-arrow-right"></i> Proceed to Boss Observation Lab
+          </button>
+        `,
+        action: () => goToStep(5)
+      },
+      {
+        step: 5,
+        breadcrumb: '<i class="fa-solid fa-binoculars"></i> Boss Nexus / Video Observation Lab',
+        render: () => `
+          <div style="width: 100%; text-align: left; display: flex; flex-direction: column; align-items: center;">
+            <h2 class="mission-card-title" style="font-size: 1.25rem; margin-bottom: 0.3rem; align-self: flex-start;">Boss Nexus Video Observation Lab</h2>
+            <p class="mission-card-desc" style="text-align: left; margin-bottom: 0.75rem; font-size: 0.8rem; align-self: flex-start;">Watch vid7.mp4 below and analyze how high-level leaders dismantle communication gridlocks under maximum pressure:</p>
+            
+            <div class="video-container-box">
+              <video controls preload="metadata">
+                <source src="vid7.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+
+            <p style="font-size: 0.8rem; font-weight: 700; margin-bottom: 0.3rem; color: var(--text-main); align-self: flex-start;">Your Boss-Tier Analysis:</p>
+            <textarea class="text-input-area" placeholder="Detail how the leader balanced assertiveness with empathy to resolve the crisis..."></textarea>
+          </div>
+          <button class="btn-action-custom" id="step-action-btn">
+            <i class="fa-solid fa-paper-plane"></i> Submit Boss Analysis (+100 XP)
+          </button>
+        `,
+        action: () => {
+          alert("Boss analysis successfully submitted! +100 XP added.");
+          goToStep(6);
+        }
+      },
+      {
+        step: 6,
+        breadcrumb: '<i class="fa-solid fa-gamepad"></i> Boss Nexus / Interactive Boss Practice',
+        render: () => `
+          <div style="width: 100%; text-align: left;">
+            <h2 class="mission-card-title" style="font-size: 1.25rem; margin-bottom: 0.3rem;">Interactive Boss Gauntlet Practice</h2>
+            <p class="mission-card-desc" style="text-align: left; font-size: 0.8rem; margin-bottom: 0.85rem;">Match each crisis scenario in the Boss Nexus to its correct countermeasure:</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%; margin-bottom: 1rem;">
+              <div style="background: #111827; padding: 0.55rem 0.85rem; border-radius: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.8rem; font-weight: 600;">1. Misinformation viral outbreak during product launch</span>
+                <span style="color: #fca5a5; font-size: 0.8rem; font-weight: 700;"><i class="fa-solid fa-check"></i> Issue prompt, transparent telemetry correction</span>
+              </div>
+              <div style="background: #111827; padding: 0.55rem 0.85rem; border-radius: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.8rem; font-weight: 600;">2. Severe executive deadlock over core goals</span>
+                <span style="color: #fca5a5; font-size: 0.8rem; font-weight: 700;"><i class="fa-solid fa-check"></i> Execute structured synthesis workshop</span>
+              </div>
+            </div>
+          </div>
+          <button class="btn-action-custom" id="step-action-btn">
+            <i class="fa-solid fa-arrow-right"></i> Proceed to Final Boss Scenario
+          </button>
+        `,
+        action: () => goToStep(7)
+      },
+      {
+        step: 7,
+        breadcrumb: '<i class="fa-solid fa-comments"></i> Boss Nexus / Ultimate Scenario Application',
+        render: () => `
+          <div style="width: 100%; text-align: left;">
+            <span class="mission-badge-tag">FINAL BOSS SCENARIO CHALLENGE</span>
+            <h2 class="mission-card-title" style="font-size: 0.95rem; margin-bottom: 0.6rem; color: #fca5a5;">"Draft an executive crisis memo addressing a major system-wide failure, combining technical root causes with reassurance for stakeholders."</h2>
+            <p style="font-size: 0.8rem; font-weight: 700; margin-bottom: 0.3rem; color: var(--text-main);">Your Executive Crisis Memo:</p>
+            <textarea class="text-input-area" placeholder="To all stakeholders: Following today's infrastructure anomaly, our engineering telemetry indicates..."></textarea>
+          </div>
+          <button class="btn-action-custom" id="step-action-btn">
+            <i class="fa-solid fa-check-double"></i> Submit Executive Memo
+          </button>
+        `,
+        action: () => {
+          alert("Executive memo evaluated and cleared by Boss Nexus protocols!");
+          goToStep(8);
+        }
+      },
+      {
+        step: 8,
+        breadcrumb: '<i class="fa-solid fa-file-shield"></i> Boss Nexus / 10-Item Ultimate Knowledge Check',
+        render: () => `
+          <div style="width: 100%; text-align: left;">
+            <h2 class="mission-card-title" style="font-size: 1.2rem;"><i class="fa-solid fa-file-lines" style="color: #ef4444;"></i> Boss Nexus Ultimate Knowledge Check (10 Items)</h2>
+            <p class="mission-card-desc" style="text-align: left; font-size: 0.8rem; margin-bottom: 0.75rem;">1. What is the ultimate objective of mastering all CommuniVerse communication frameworks?</p>
+            <div class="options-container" style="margin-bottom: 0.85rem;">
+              <div class="option-card"><i class="fa-solid fa-circle"></i> To memorize rhetorical vocabulary for exams</div>
+              <div class="option-card selected"><i class="fa-solid fa-circle-check"></i> To lead, resolve conflicts, and drive unified understanding across complex ecosystems</div>
+              <div class="option-card"><i class="fa-solid fa-circle"></i> To avoid collaboration whenever possible</div>
+            </div>
+          </div>
+          <button class="btn-action-custom" id="step-action-btn">
+            <i class="fa-solid fa-paper-plane"></i> Submit Final Assessment
+          </button>
+        `,
+        action: () => {
+          alert("Ultimate knowledge check successfully cleared!");
+          goToStep(9);
+        }
+      },
+      {
+        step: 9,
+        breadcrumb: '<i class="fa-solid fa-pen-nib"></i> Boss Nexus / Final Video Reflection',
+        render: () => `
+          <span class="mission-badge-tag">FINAL VIDEO REFLECTION PORTAL</span>
+          <h2 class="mission-card-title" style="font-size: 1.15rem; margin-bottom: 0.75rem;">Reflect on your entire CommuniVerse journey: How has mastering communication transformed your leadership and problem-solving capabilities?</h2>
+          
+          <div class="reflection-container">
+            <div class="webcam-preview-box" id="webcam-box">
+              <div class="webcam-placeholder-content" id="webcam-placeholder">
+                <i class="fa-solid fa-video" style="font-size: 2rem; color: #ef4444;"></i>
+                <span style="font-size: 0.8rem; font-weight: 600;">Webcam Preview / Recorder Ready</span>
+              </div>
+              <video id="webcam-video" autoplay muted playsinline></video>
+            </div>
+
+            <div class="reflection-actions-row">
+              <button class="reflection-btn" id="btn-start-webcam">
+                <i class="fa-solid fa-camera"></i> Start Camera
+              </button>
+              <button class="reflection-btn" id="btn-record-video" disabled style="opacity: 0.5;">
+                <i class="fa-solid fa-circle" style="color: #ef4444;"></i> Record Video
+              </button>
+              <button class="reflection-btn" id="btn-upload-file">
+                <i class="fa-solid fa-folder-open"></i> Upload Video File
+              </button>
+              <input type="file" id="hidden-file-input" class="file-input-hidden" accept="video/*">
+            </div>
+            <div id="upload-status-text" style="font-size: 0.75rem; color: var(--text-muted); text-align: center; display: none;"></div>
+          </div>
+
+          <button class="btn-action-custom" id="step-action-btn">
+            <i class="fa-solid fa-floppy-disk"></i> Save Final Reflection
+          </button>
+        `,
+        init: () => {
+          const btnStartWebcam = document.getElementById('btn-start-webcam');
+          const btnRecordVideo = document.getElementById('btn-record-video');
+          const btnUploadFile = document.getElementById('btn-upload-file');
+          const hiddenFileInput = document.getElementById('hidden-file-input');
+          const webcamVideo = document.getElementById('webcam-video');
+          const webcamPlaceholder = document.getElementById('webcam-placeholder');
+          const uploadStatusText = document.getElementById('upload-status-text');
+          const saveBtn = document.getElementById('step-action-btn');
+
+          let mediaStream = null;
+          let mediaRecorder = null;
+          let recordedChunks = [];
+          let isRecording = false;
+
+          btnStartWebcam.addEventListener('click', async () => {
+            try {
+              mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+              webcamVideo.srcObject = mediaStream;
+              webcamVideo.style.display = 'block';
+              webcamPlaceholder.style.display = 'none';
+              btnStartWebcam.innerHTML = '<i class="fa-solid fa-check" style="color: #ef4444;"></i> Camera Active';
+              btnStartWebcam.disabled = true;
+              btnRecordVideo.disabled = false;
+              btnRecordVideo.style.opacity = '1';
+            } catch (err) {
+              alert("Unable to access webcam. Please check permissions or use the 'Upload Video File' option instead.");
+              console.error(err);
+            }
+          });
+
+          btnRecordVideo.addEventListener('click', () => {
+            if (!isRecording) {
+              recordedChunks = [];
+              try {
+                mediaRecorder = new MediaRecorder(mediaStream, { mimeType: 'video/webm' });
+              } catch (e) {
+                mediaRecorder = new MediaRecorder(mediaStream);
+              }
+
+              mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                  recordedChunks.push(event.data);
+                }
+              };
+
+              mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                uploadStatusText.style.display = 'block';
+                uploadStatusText.innerHTML = `<i class="fa-solid fa-circle-check" style="color: #ef4444;"></i> Recorded final video ready (${(blob.size / 1024 / 1024).toFixed(2)} MB)`;
+              };
+
+              mediaRecorder.start();
+              isRecording = true;
+              btnRecordVideo.classList.add('recording');
+              btnRecordVideo.innerHTML = '<i class="fa-solid fa-stop"></i> Stop Recording';
+            } else {
+              mediaRecorder.stop();
+              isRecording = false;
+              btnRecordVideo.classList.remove('recording');
+              btnRecordVideo.innerHTML = '<i class="fa-solid fa-check" style="color: #ef4444;"></i> Recording Saved';
+              btnRecordVideo.disabled = true;
+            }
+          });
+
+          btnUploadFile.addEventListener('click', () => {
+            hiddenFileInput.click();
+          });
+
+          hiddenFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+              uploadStatusText.style.display = 'block';
+              uploadStatusText.innerHTML = `<i class="fa-solid fa-file-video" style="color: #ef4444;"></i> Uploaded: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+            }
+          });
+
+          saveBtn.addEventListener('click', () => {
+            if (mediaStream) {
+              mediaStream.getTracks().forEach(track => track.stop());
+            }
+            alert("Final reflection saved successfully!");
+            goToStep(10);
+          });
+        }
+      },
+      {
+        step: 10,
+        breadcrumb: '<i class="fa-solid fa-trophy"></i> Boss Nexus / Ultimate Victory & Completion',
+        render: () => `
+          <div style="font-size: 2.75rem; color: #fbbf24; margin-bottom: 0.4rem;"><i class="fa-solid fa-crown"></i></div>
+          <span class="mission-badge-tag" style="background: #fbbf24; color: #0f172a;">BOSS NEXUS CONQUERED!</span>
+          <h2 class="mission-card-title">Ultimate Victory Achieved!</h2>
+          <p class="mission-card-desc">You have defeated the Boss Nexus! You unlocked the legendary Apex Communicator Crown and earned +1,000 Grandmaster XP.</p>
+          <button class="btn-action-custom" id="step-action-btn">
+            <i class="fa-solid fa-flag-checkered"></i> Complete Game & Return to World Map
+          </button>
+        `,
+        action: () => {
+          localStorage.setItem('level_7_completed', 'true');
+          window.location.href = "world-map.html";
+        }
+      }
+    ];
+
+    let currentStepIndex = 0;
+
+    function goToStep(stepNum) {
+      if (stepNum < 1 || stepNum > 10) return;
+      currentStepIndex = stepNum - 1;
+      const data = missionSteps[currentStepIndex];
+
+      breadcrumbTitle.innerHTML = data.breadcrumb;
+      missionCardContent.innerHTML = data.render();
+
+      const stepActionBtn = document.getElementById('step-action-btn');
+      if (stepActionBtn && data.action) {
+        stepActionBtn.addEventListener('click', data.action);
+      }
+
+      if (data.init) {
+        data.init();
+      }
+
+      const percent = (stepNum / 10) * 100;
+      progressBarFill.style.width = `${percent}%`;
+      progressStepLabel.textContent = `Step ${stepNum} of 10`;
+
+      btnPrevious.disabled = (stepNum === 1);
+      btnNext.disabled = (stepNum === 10);
+
+      sidebarItems.forEach((item, idx) => {
+        if (idx === currentStepIndex) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+    }
+
+    btnPrevious.addEventListener('click', () => {
+      if (currentStepIndex > 0) {
+        goToStep(currentStepIndex);
+      }
+    });
+
+    btnNext.addEventListener('click', () => {
+      if (currentStepIndex < 9) {
+        goToStep(currentStepIndex + 2);
+      }
+    });
+
+    sidebarItems.forEach((item, index) => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        goToStep(index + 1);
+      });
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const userDocRef = doc(db, "users", user.uid);
+          onSnapshot(userDocRef, (docSnap) => {
+            if (docSnap.exists()) {
+              const userData = docSnap.data();
+              const currentXP = Number(userData.xp || userData.score || 4000);
+              userXpDisplay.textContent = currentXP.toLocaleString();
+            }
+          });
+        } catch (err) {
+          console.error("Error syncing user XP:", err);
+        }
+      }
+    });
+
+    goToStep(1);
+  </script>
+</body>
+</html>

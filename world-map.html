@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Map - CommuniVerse Galaxy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-green: #10b981;
+      --hover-green: #059669;
+      --bg-dark: #0f172a;
+      --card-dark: #1e293b;
+      --sidebar-dark: #111827;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-dark);
+      background-image: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.75)), url('pic2bg.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Top Navigation Bar */
+    .galaxy-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2.5rem;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.4);
+      background: rgba(17, 24, 39, 0.8);
+      backdrop-filter: blur(10px);
+      z-index: 10;
+    }
+
+    .btn-dashboard {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-dashboard:hover {
+      background: #334155;
+      border-color: var(--primary-green);
+    }
+
+    .audio-status-pill {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--primary-green);
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+    }
+
+    /* Main Galactic View */
+    .galaxy-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+    }
+
+    .galaxy-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .galaxy-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.3rem;
+      letter-spacing: -0.025em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .galaxy-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Worlds Grid Container */
+    .worlds-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1100px;
+      align-items: center;
+      padding-bottom: 1rem;
+    }
+
+    .worlds-row {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      width: 100%;
+      flex-wrap: wrap;
+    }
+
+    /* World Card Styling */
+    .world-card {
+      background: rgba(30, 41, 59, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      width: 245px;
+      padding: 1.5rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .world-card.active-selectable {
+      border: 2px solid #fbbf24;
+      background: rgba(30, 41, 59, 0.9);
+      box-shadow: 0 0 25px rgba(251, 191, 36, 0.25);
+    }
+
+    .world-card.available-selectable {
+      border: 2px solid var(--primary-green);
+      background: rgba(30, 41, 59, 0.9);
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.25);
+    }
+
+    .world-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .world-trophy-icon {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      color: #fbbf24;
+      font-size: 1rem;
+    }
+
+    /* Avatar Orb */
+    .world-avatar-orb {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-bottom: 0.85rem;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      position: relative;
+      background: #0f172a;
+    }
+
+    .world-avatar-orb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .world-avatar-orb .lock-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 1.25rem;
+    }
+
+    /* World Meta Info */
+    .world-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .world-level-tag {
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.15rem;
+    }
+
+    .world-sub-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    /* Status Pill inside Card */
+    .world-status-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .world-status-pill.completed {
+      color: var(--primary-green);
+    }
+
+    .world-status-pill.available {
+      color: #34d399;
+    }
+
+    .world-status-pill.locked {
+      color: var(--text-muted);
+    }
+
+    /* Action Buttons */
+    .btn-world-action {
+      width: 100%;
+      padding: 0.6rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-world-action.enter {
+      background: var(--primary-green);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-world-action.enter:hover {
+      background: var(--hover-green);
+    }
+
+    .btn-world-action.locked {
+      background: rgba(51, 65, 85, 0.4);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="galaxy-topbar">
+    <a href="student-dashboard.html" class="btn-dashboard">
+      <i class="fa-solid fa-arrow-left"></i> Student Dashboard
+    </a>
+    <div class="audio-status-pill" id="audio-toggle-btn">
+      <i class="fa-solid fa-volume-high" style="color: var(--primary-green);"></i> Space Sound Playing
+    </div>
+  </header>
+
+  <!-- Galactic Main Content -->
+  <main class="galaxy-main">
+    <div class="galaxy-header">
+      <h1 class="galaxy-title">
+        <i class="fa-solid fa-globe" style="color: var(--primary-green);"></i> CommuniVerse Galaxy
+      </h1>
+      <p class="galaxy-subtitle">Explore communication worlds and unlock your journey.</p>
+    </div>
+
+    <!-- Worlds Selection Grid -->
+    <div class="worlds-container" id="worlds-container">
+      
+      <!-- Top Row: Worlds 1 to 4 -->
+      <div class="worlds-row">
+        
+        <!-- World 1 -->
+        <div class="world-card" data-level="1">
+          <div class="world-trophy-icon" style="display:none;"><i class="fa-solid fa-trophy"></i></div>
+          <div class="world-avatar-orb"><img src="pic2bg.png" alt="Language Forest"></div>
+          <span class="world-level-tag">LEVEL 1</span>
+          <h3 class="world-name"><i class="fa-solid fa-tree" style="color: var(--primary-green);"></i> Language Forest</h3>
+          <span class="world-sub-desc">Language Explorer</span>
+          <div class="world-status-pill locked"><i class="fa-solid fa-lock"></i> Locked</div>
+          <a href="level1.html" class="btn-world-action locked">Locked</a>
+        </div>
+
+        <!-- World 2 -->
+        <div class="world-card" data-level="2">
+          <div class="world-trophy-icon" style="display:none;"><i class="fa-solid fa-trophy"></i></div>
+          <div class="world-avatar-orb"><img src="pic2bg.png" alt="Tone Detective Metro"></div>
+          <span class="world-level-tag">LEVEL 2</span>
+          <h3 class="world-name"><i class="fa-solid fa-city" style="color: #60a5fa;"></i> Tone Detective Metro</h3>
+          <span class="world-sub-desc">Tone Detective</span>
+          <div class="world-status-pill locked"><i class="fa-solid fa-lock"></i> Locked</div>
+          <a href="level2.html" class="btn-world-action locked">Locked</a>
+        </div>
+
+        <!-- World 3 -->
+        <div class="world-card" data-level="3">
+          <div class="world-trophy-icon" style="display:none;"><i class="fa-solid fa-trophy"></i></div>
+          <div class="world-avatar-orb"><img src="pic2bg.png" alt="Audience Arena"></div>
+          <span class="world-level-tag">LEVEL 3</span>
+          <h3 class="world-name"><i class="fa-solid fa-users" style="color: var(--text-muted);"></i> Audience Arena</h3>
+          <span class="world-sub-desc">Audience Challenge</span>
+          <div class="world-status-pill locked"><i class="fa-solid fa-lock"></i> Locked</div>
+          <a href="level3.html" class="btn-world-action locked">Locked</a>
+        </div>
+
+        <!-- World 4 -->
+        <div class="world-card" data-level="4">
+          <div class="world-trophy-icon" style="display:none;"><i class="fa-solid fa-trophy"></i></div>
+          <div class="world-avatar-orb"><img src="pic2bg.png" alt="Digital District"></div>
+          <span class="world-level-tag">LEVEL 4</span>
+          <h3 class="world-name"><i class="fa-solid fa-laptop-code" style="color: var(--text-muted);"></i> Digital District</h3>
+          <span class="world-sub-desc">Chat Simulator</span>
+          <div class="world-status-pill locked"><i class="fa-solid fa-lock"></i> Locked</div>
+          <a href="level4.html" class="btn-world-action locked">Locked</a>
+        </div>
+
+      </div>
+
+      <!-- Bottom Row: Worlds 5 to 7 -->
+      <div class="worlds-row">
+        
+        <!-- World 5 -->
+        <div class="world-card" data-level="5">
+          <div class="world-trophy-icon" style="display:none;"><i class="fa-solid fa-trophy"></i></div>
+          <div class="world-avatar-orb"><img src="pic2bg.png" alt="Vocal Citadel"></div>
+          <span class="world-level-tag">LEVEL 5</span>
+          <h3 class="world-name"><i class="fa-solid fa-microphone-lines" style="color: var(--text-muted);"></i> Vocal Citadel</h3>
+          <span class="world-sub-desc">Pronunciation World</span>
+          <div class="world-status-pill locked"><i class="fa-solid fa-lock"></i> Locked</div>
+          <a href="level5.html" class="btn-world-action locked">Locked</a>
+        </div>
+
+        <!-- World 6 -->
+        <div class="world-card" data-level="6">
+          <div class="world-trophy-icon" style="display:none;"><i class="fa-solid fa-trophy"></i></div>
+          <div class="world-avatar-orb"><img src="pic2bg.png" alt="Synthesis Sanctuary"></div>
+          <span class="world-level-tag">LEVEL 6</span>
+          <h3 class="world-name"><i class="fa-solid fa-book-bookmark" style="color: var(--text-muted);"></i> Synthesis Sanctuary</h3>
+          <span class="world-sub-desc">Academic Labs</span>
+          <div class="world-status-pill locked"><i class="fa-solid fa-lock"></i> Locked</div>
+          <a href="level6.html" class="btn-world-action locked">Locked</a>
+        </div>
+
+        <!-- World 7 -->
+        <div class="world-card" data-level="7">
+          <div class="world-trophy-icon" style="display:none;"><i class="fa-solid fa-trophy"></i></div>
+          <div class="world-avatar-orb"><img src="pic2bg.png" alt="Boss Nexus"></div>
+          <span class="world-level-tag">LEVEL 7</span>
+          <h3 class="world-name"><i class="fa-solid fa-crown" style="color: var(--text-muted);"></i> Boss Nexus</h3>
+          <span class="world-sub-desc">Communication Empire</span>
+          <div class="world-status-pill locked"><i class="fa-solid fa-lock"></i> Locked</div>
+          <a href="level7.html" class="btn-world-action locked">Locked</a>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // Dynamic Level Unlock and Completion status check using localStorage[cite: 4]
+    document.addEventListener("DOMContentLoaded", () => {
+      const cards = document.querySelectorAll('.world-card');
+      
+      cards.forEach((card, index) => {
+        const levelNum = index + 1;
+        const statusPill = card.querySelector('.world-status-pill');
+        const actionBtn = card.querySelector('.btn-world-action');
+        const trophyIcon = card.querySelector('.world-trophy-icon');
+        const lockOverlay = card.querySelector('.lock-overlay');
+
+        // Check completion flags from localStorage for each respective level/task state
+        const isCompleted = localStorage.getItem(`level_${levelNum}_completed`) === 'true';
+        let isUnlocked = (levelNum === 1) || (localStorage.getItem(`level_${levelNum - 1}_completed`) === 'true');
+
+        if (isCompleted) {
+          card.classList.add('active-selectable');
+          statusPill.className = "world-status-pill completed";
+          statusPill.innerHTML = '<i class="fa-solid fa-check"></i> Completed';
+          actionBtn.className = "btn-world-action enter";
+          actionBtn.textContent = "Replay World";
+          if (trophyIcon) trophyIcon.style.display = "block";
+        } else if (isUnlocked) {
+          card.classList.add('available-selectable');
+          statusPill.className = "world-status-pill available";
+          statusPill.innerHTML = '<i class="fa-solid fa-lock-open"></i> Available';
+          actionBtn.className = "btn-world-action enter";
+          actionBtn.textContent = "Enter World";
+        } else {
+          statusPill.className = "world-status-pill locked";
+          statusPill.innerHTML = '<i class="fa-solid fa-lock"></i> Locked';
+          actionBtn.className = "btn-world-action locked";
+          actionBtn.textContent = "Locked";
+          actionBtn.removeAttribute('href');
+        }
+      });
+    });
+
+    // Audio toggle simulation[cite: 4]
+    const audioToggleBtn = document.getElementById('audio-toggle-btn');
+    let isPlaying = true;
+    audioToggleBtn.addEventListener('click', () => {
+      isPlaying = !isPlaying;
+      if (isPlaying) {
+        audioToggleBtn.innerHTML = '<i class="fa-solid fa-volume-high" style="color: var(--primary-green);"></i> Space Sound Playing';
+      } else {
+        audioToggleBtn.innerHTML = '<i class="fa-solid fa-volume-xmark" style="color: var(--text-muted);"></i> Space Sound Muted';
+      }
+    });
+  </script>
+</body>
+</html>
